@@ -83,7 +83,6 @@
             urlSwitch = "selected",
             data = {
                 alias: ["test@test.com"],
-                deviceType: ["web"],
                 message: {},
                 "simple-push": simplePushVal
             };

@@ -990,7 +990,8 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
                 data: JSON.stringify({
                     category: messageType,
                     deviceToken: endpoint.channelID,
-                    alias: alias
+                    alias: alias,
+                    deviceType: "web"
                 })
             });
         };
