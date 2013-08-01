@@ -9,16 +9,25 @@
         broadcastRequest = navigator.push.register();
         broadcastRequest.onsuccess = function( event ) {
             broadcastEndpoint = event.target.result;
-            UPClient.registerWithPushServer( "broadcast", broadcastEndpoint );
+            UPClient.registerWithPushServer({
+                category: "broadcast",
+                deviceToken: broadcastEndpoint.channelID
+            });
             appendTextArea("Subscribed to Broadcast messages on " + broadcastEndpoint.channelID);
             $("#broadcastVersion").val( localStorage.getItem( broadcastEndpoint.channelID ) || 1 );
             $("#broadcast").prop("disabled", false);
         };
 
         mailRequest = navigator.push.register();
+        console.log(mailRequest);
         mailRequest.onsuccess = function( event ) {
             mailEndpoint = event.target.result;
-            UPClient.registerWithPushServer( "mail", mailEndpoint, "test@test.com" );
+            console.log(mailEndpoint);
+            UPClient.registerWithPushServer({
+                category: "mail",
+                deviceToken: mailEndpoint.channelID,
+                alias: "test@test.com"
+            });
             $("#mailVersion").attr("name", mailEndpoint.channelID);
             appendTextArea("Subscribed to Mail messages on " + mailEndpoint.channelID);
             $("#mailVersion").val( localStorage.getItem( mailEndpoint.channelID ) || 1 );
@@ -28,7 +37,11 @@
         fooRequest = navigator.push.register();
         fooRequest.onsuccess = function( event ) {
             fooEndpoint = event.target.result;
-            UPClient.registerWithPushServer( "foo", fooEndpoint, "test@test.com" );
+            UPClient.registerWithPushServer({
+                category: "foo",
+                deviceToken: fooEndpoint.channelID,
+                alias: "test@test.com"
+            });
             $("#fooVersion").attr("name", fooEndpoint.channelID);
             appendTextArea("Subscribed to Foo messages on " + fooEndpoint.channelID);
             $("#fooVersion").val( localStorage.getItem( fooEndpoint.channelID ) || 1 );
@@ -62,7 +75,7 @@
         return document.getElementById('responseText');
     }
 
-    $("button").on("click", function( event ) {
+    $("button").not("#reconnect").on("click", function( event ) {
         var urlSwitch, data,
             $this = $(this),
             type = this.id,
@@ -105,5 +118,18 @@
         });
     });
 
-    SPClient = AeroGear.SimplePushClient( "http://localhost:7777/simplepush", spConnect )
+    $("#reconnect").on("click", function(event) {
+        navigator.push.reconnect();
+    });
+
+    function spClose() {
+        $("#reconnect").show();
+        appendTextArea("\nConnection Lost!\n");
+    }
+
+    SPClient = AeroGear.SimplePushClient({
+        simplePushServerURL: "http://localhost:7777/simplepush",
+        onConnect: spConnect,
+        onClose: spClose
+    });
 })();
