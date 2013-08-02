@@ -70,7 +70,7 @@ Now perform a ```cd server-netty``` and execute the following command to start t
 	
 This starts an _unsecrued_ instance of the AeroGear SimplePush Server on localhost using port 7777.
 
-**_NOTE_:** The server uses an in-memory base for this demo. None of the SimplePush channels are persisted by the server. A restart of the server means that the previous registered channels are gone.
+**_NOTE_:** The server uses an in-memory database for this demo. None of the SimplePush channels are persisted by the server. A restart of the server means that the previous registered channels are gone.
 
 
 ### JavaScript client 
