@@ -1,5 +1,7 @@
 (function() {
     var mailEndpoint, mailRequest, SPClient;
+
+    // onConnect callback function:
     function spConnect() {
         getTextAreaElement().value = "SockJS connection established!";
 
@@ -21,7 +23,6 @@
             if ( message.channelID === mailEndpoint.channelID ) {
                 // let's react on that mail....
                 appendTextArea("Mail Notification - " + message.version);
-                localStorage.setItem( message.channelID, +message.version + 1 );
             }
         });
     }
@@ -41,7 +42,7 @@
             navigator.push.reconnect();
         });
         
-    // Cos
+    // onClose callback function:
     function spClose() {
         $("#reconnect").show();
         appendTextArea("\nConnection Lost!\n");

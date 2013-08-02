@@ -96,6 +96,10 @@ This sends a ```HTTP PUT``` request to the SimplePush server and the server will
 
 **Congratulations!** You have received your first notification using AeroGear's SimplePush offerings!
 
+
+**_NOTE_:** If you want to send another push notification to that endpoint, make sure you are _increasing_ the version number (e.g. ```version=3``` or ```version=4``` in this case)! Using the name ```version``` for that given endpoint does **not** cause a push notification to be sent to the client.
+
+
 Details: The JavaScript client
 ------------------------------
 
@@ -136,11 +140,10 @@ Besides storing the returned ```endpoint``` and logging its ```channelID``` noth
         if ( message.channelID === mailEndpoint.channelID ) {
             // let's react on that mail....
             appendTextArea("Mail Notification - " + message.version);
-            localStorage.setItem( message.channelID, +message.version + 1 );
         }
     });
 
-The notification handler receives any ```push``` message/event. Inside of the attached function, we perform some application specific JavaScript code. First we check if the ```channelID``` of the received message matches the ```channelID``` of our notification endpoint. If that is the case, we log the ```version``` of the new data and store the next version on the ```localStorage```.
+The notification handler receives any ```push``` message/event. Inside of the attached function, we perform some application specific JavaScript code. First we check if the ```channelID``` of the received message matches the ```channelID``` of our notification endpoint. If that is the case, we log the current ```version``` of the new data.
 
 **Note:** As said above, in SimplePush no payload is being sent to the client. In this quickstart nothing special is done. For instance in a real web application it is reasonalbe to perform a ```HTTP GET``` based on a received _version update_, to display the latest data.
  
