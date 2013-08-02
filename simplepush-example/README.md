@@ -68,7 +68,7 @@ Now perform a ```cd server-netty``` and execute the following command to start t
 
     mvn exec:java -Dexec.args="-host=localhost -port=7777 -tls=false -ack_interval=10000 -useragent_reaper_timeout=60000" 
 
-This starts an _unsecrued_ instance of the AeroGear SimplePush Server on localhost using port 7777.
+This starts an _unsecured_ instance of the AeroGear SimplePush Server on localhost using port 7777.
 
 **_NOTE_:** The server uses an in-memory database for this demo. None of the SimplePush channels are persisted by the server. A restart of the server means that the previous registered channels are gone.
 
