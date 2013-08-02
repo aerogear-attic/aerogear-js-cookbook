@@ -20,7 +20,7 @@ The AeroGear project offers two components around Mozilla's SimplePush:
 * a polyfill JavaScript client library
 * a Server implementation of the protocol
 
-Inside of the [SimplePush Protcol](https://wiki.mozilla.org/WebAPI/SimplePush/Protocol) it is specified that the connection between the clients (e.g. a Firefox OS device or a Firefox desktop browser) and the server needs to be established over a (secure) WebSocket connection.
+Inside of the [SimplePush Protocol](https://wiki.mozilla.org/WebAPI/SimplePush/Protocol) it is specified that the connection between the clients (e.g. a Firefox OS device or a Firefox desktop browser) and the server needs to be established over a (secure) WebSocket connection.
 
 Since the AeroGear polyfill library supports other browsers that may lack WebSocket support or are using an older version of the standard, a transparent fallback strategy has been implemented. The [SockJS](https://github.com/sockjs/sockjs-client) protocol is support on both sides: the JavaScript library and the server implementation.
 
