@@ -3,7 +3,7 @@
 
     // onConnect callback function:
     function spConnect() {
-        getTextAreaElement().value = "SockJS connection established!";
+        getTextAreaElement().value = "Connection established!";
 
         // use 'PushManager' to request a new PushServer URL endpoint for 'mail' notifications:
         mailRequest = navigator.push.register();
@@ -14,7 +14,7 @@
             // extract the endpoint object from the event: 
             mailEndpoint = event.target.result;
             // store the channelID...
-            appendTextArea("Subscribed to Mail messages on " + mailEndpoint.channelID);
+            appendTextArea("Subscribed to Mail messages on " + mailEndpoint.pushEndpoint);
         };
 
         // set the notification handler:

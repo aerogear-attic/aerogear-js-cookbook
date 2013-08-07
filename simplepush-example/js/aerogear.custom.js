@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v1.2.0-dev - 2013-08-01
+/*! AeroGear JavaScript Library - v1.2.0-dev - 2013-08-07
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -485,11 +485,12 @@ AeroGear.Notifier.DISCONNECTING = 2;
 AeroGear.Notifier.DISCONNECTED = 3;
 
 /**
-    DESCRIPTION
+    This adapter allows communication with the AeroGear implementation of the SimplePush server protocol. Most of this functionality will be hidden behind the SimplePush client polyfill but is accessible if necessary.
     @constructs AeroGear.Notifier.adapters.SimplePush
     @param {String} clientName - the name used to reference this particular notifier client
     @param {Object} [settings={}] - the settings to be passed to the adapter
     @param {String} [settings.connectURL=""] - defines the URL for connecting to the messaging service
+    @param {Boolean} [settings.useNative=false] - Create a WebSocket connection to the Mozilla SimplePush server instead of a SockJS connection to a custom server
     @returns {Object} The created notifier client
  */
 AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
@@ -504,6 +505,7 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
     var type = "SimplePush",
         name = clientName,
         connectURL = settings.connectURL || "",
+        useNative = settings.useNative || false,
         client = null,
         pushStore = JSON.parse( localStorage.getItem("ag-push-store") || '{}' );
 
@@ -552,6 +554,15 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
     };
 
     /**
+        Returns the value of the private useNative var
+        @private
+        @augments AeroGear.Notifier.adapters.SimplePush
+     */
+    this.getUseNative = function() {
+        return useNative;
+    };
+
+    /**
         Returns the value of the private client var
         @private
         @augments AeroGear.Notifier.adapters.SimplePush
@@ -589,18 +600,23 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
     };
 
     /**
+        Processes all incoming messages from the SimplePush server
+        @private
+        @augments AeroGear.Notifier.adapters.SimplePush
      */
     this.processMessage = function( message ) {
         var channel, updates;
         if ( message.messageType === "register" && message.status === 200 ) {
             channel = {
                 channelID: message.channelID,
+                pushEndpoint: message.pushEndpoint,
                 version: message.version,
                 state: "used"
             };
             pushStore.channels = this.updateChannel( pushStore.channels, channel );
             this.setPushStore( pushStore );
 
+            // Trigger registration success callback
             jQuery( navigator.push ).trigger( jQuery.Event( message.channelID + "-success", {
                 target: {
                     result: channel
@@ -615,7 +631,11 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
             throw "SimplePushUnregistrationError";
         } else if ( message.messageType === "notification" ) {
             updates = message.updates;
+
+            // Notifications could come in a batch so process all
             for ( var i = 0, updateLength = updates.length; i < updateLength; i++ ) {
+
+                // Trigger the push event which apps will create their listeners to respond to when receiving messages
                 jQuery( navigator.push ).trigger( jQuery.Event( "push", {
                     message: updates[ i ]
                 }));
@@ -628,6 +648,9 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
     };
 
     /**
+        Generate the hello message send during the initial handshake with the SimplePush server. Sends any pre-existing channels for reregistration as well
+        @private
+        @augments AeroGear.Notifier.adapters.SimplePush
      */
     this.generateHello = function() {
         var channels = pushStore.channels,
@@ -650,6 +673,11 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
     };
 
     // Utility Functions
+    /**
+        Find the array index of a particular channel based on a particular field value
+        @private
+        @augments AeroGear.Notifier.adapters.SimplePush
+     */
     this.findChannelIndex = function( channels, filterField, filterValue ) {
         for ( var i = 0; i < channels.length; i++ ) {
             if ( channels[ i ][ filterField ] === filterValue ) {
@@ -658,11 +686,17 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
         }
     };
 
+    /**
+        Update a channel with new information
+        @private
+        @augments AeroGear.Notifier.adapters.SimplePush
+     */
     this.updateChannel = function( channels, channel ) {
         for( var i = 0; i < channels.length; i++ ) {
             if ( channels[ i ].channelID === channel.channelID ) {
                 channels[ i ].version = channel.version;
                 channels[ i ].state = channel.state;
+                channels[ i ].pushEndpoint = channel.pushEndpoint;
                 break;
             }
         }
@@ -670,6 +704,11 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
         return channels;
     };
 
+    /**
+        Proxies the binding of subscription success handlers
+        @private
+        @augments AeroGear.Notifier.adapters.SimplePush
+     */
     this.bindSubscribeSuccess = function( channelID, request ) {
         jQuery( navigator.push ).off( channelID + "-success" );
         jQuery( navigator.push ).on( channelID + "-success", function( event ) {
@@ -681,17 +720,35 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
 //Public Methods
 /**
     Connect the client to the messaging service
-    @param {Object} options - Options to pass to the connect method
+    @param {Object} [options] - Options to pass to the connect method
     @param {String} [options.url] - The URL for the messaging service. This url will override and reset any connectURL specified when the client was created.
     @param {Function} [options.onConnect] - callback to be executed when a connection is established and hello message has been acknowledged
     @param {Function} [options.onConnectError] - callback to be executed when connecting to a service is unsuccessful
     @param {Function} [options.onClose] - callback to be executed when a connection to the server is closed
     @example
+    var SPNotifier = AeroGear.Notifier({
+        name: "sp",
+        type: "SimplePush",
+        settings: {
+            connectURL: "http://localhost:7777/simplepush"
+        }
+    }).clients.sp;
 
+    // Use all defaults
+    SPNotifier.connect();
+
+    // Custom options
+    SPNotifier.connect({
+        simplePushServerURL: "http://some.other.domain",
+        onConnect: spConnect,
+        onClose: spClose
+    });
  */
 AeroGear.Notifier.adapters.SimplePush.prototype.connect = function( options ) {
+    options = options || {};
+
     var that = this,
-        client = new SockJS( options.url || this.getConnectURL() );
+        client = this.getUseNative() ? new WebSocket( options.url || this.getConnectURL() ) : new SockJS( options.url || this.getConnectURL() );
 
     client.onopen = function() {
         // Immediately send hello message
@@ -735,7 +792,21 @@ AeroGear.Notifier.adapters.SimplePush.prototype.connect = function( options ) {
     Disconnect the client from the messaging service
     @param {Function} [onDisconnect] - callback to be executed when a connection is terminated
     @example
+    var SPNotifier = AeroGear.Notifier({
+        name: "sp",
+        type: "SimplePush",
+        settings: {
+            connectURL: "http://localhost:7777/simplepush"
+        }
+    }).clients.sp;
 
+    // Default
+    SPNotifier.disconnect();
+
+    // Pass disconnect callback
+    SPNotifier.disconnect(function() {
+        console.log("Disconnected");
+    });
  */
 AeroGear.Notifier.adapters.SimplePush.prototype.disconnect = function( onDisconnect ) {
     var client = this.getClient();
@@ -748,10 +819,23 @@ AeroGear.Notifier.adapters.SimplePush.prototype.disconnect = function( onDisconn
 
 /**
     Subscribe this client to a new channel
-    @param {Object|Array} channels - a channel object or array of channel objects to which this client can subscribe. Each object should have a String address as well as a callback to be executed when a message is received on that channel.
+    @param {Object|Array} channels - a channel object or array of channel objects to which this client can subscribe. At a minimum, each channel should contain a requestObject which will eventually contain the subscription success callback and a callback, which is fired when notifications are received. Reused channels may also contain channelID and other metadata.
     @param {Boolean} [reset] - if true, remove all channels from the set and replace with the supplied channel(s)
     @example
+    var SPNotifier = AeroGear.Notifier({
+        name: "sp",
+        type: "SimplePush",
+        settings: {
+            connectURL: "http://localhost:7777/simplepush"
+        }
+    }).clients.sp;
 
+    SPNotifier.subscribe({
+        requestObject: {},
+        callback: function( message ) {
+            console.log("Notification Received");
+        }
+    });
  */
 AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, reset ) {
     var index, response, channelID, channelLength,
@@ -774,6 +858,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, 
             if ( index !== undefined ) {
                 this.bindSubscribeSuccess( pushStore.channels[ index ].channelID, channels[ i ].requestObject );
                 channels[ i ].channelID = pushStore.channels[ index ].channelID;
+                channels[ i ].pushEndpoint = pushStore.channels[ index ].pushEndpoint;
                 channels[ i ].state = "used";
 
                 // Trigger the registration event since there will be no register message
@@ -812,7 +897,15 @@ AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, 
     Unsubscribe this client from a channel
     @param {Object|Array} channels - a channel object or a set of channel objects to which this client nolonger wishes to subscribe
     @example
+    var SPNotifier = AeroGear.Notifier({
+        name: "sp",
+        type: "SimplePush",
+        settings: {
+            connectURL: "http://localhost:7777/simplepush"
+        }
+    }).clients.sp;
 
+    SPNotifier.unsubscribe( channelObject );
  */
 AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels ) {
     var client = this.getClient();
@@ -824,7 +917,23 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
 };
 
 (function( AeroGear, $, undefined ) {
-    /* DOCS */
+    /**
+        The SimplePushClient object is used as a sort of polyfill/implementation of the SimplePush spec implemented in Firefox OS and the Firefox browser and provides a mechanism for subscribing to and acting on push notifications in a web application. See https://wiki.mozilla.org/WebAPI/SimplePush
+        @constructs AeroGear.UnifiedPushClient
+        @param {Object} options - an object used to initialize the connection to the SimplePush server
+        @param {Boolean} [options.useNative=false] - if true, the connection will first try to use the Mozilla push network (still in development and not ready for production) before falling back to the SimplePush server specified
+        @param {String} [options.simplePushServerURL] - the URL of the SimplePush server. This option is optional but only if you don't want to support browsers that are missing websocket support and you trust the not yet production ready Mozilla push server.
+        @param {Function} options.onConnect - a callback to fire when a connection is established with the SimplePush server. This is a deviation from the SimplePush spec as it is not necessary when you using the in browser functionality since the browser establishes the connection before the application is started.
+        @param {Function} options.onClose - a callback to fire when a connection to the SimplePush server is closed or lost.
+        @returns {Object} The created unified push server client
+        @example
+        //Create the SimplePushClient object:
+        var client = AeroGear.SimplePushClient({
+            simplePushServerURL: "https://localhost:7777/simplepush",
+            onConnect: myConnectCallback,
+            onClose: myCloseCallback
+        });
+     */
     AeroGear.SimplePushClient = function( options ) {
         // Allow instantiation without using new
         if ( !( this instanceof AeroGear.SimplePushClient ) ) {
@@ -833,12 +942,41 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
 
         this.options = options || {};
 
+        // Check for native push support
+        if ( !!navigator.push && this.options.useNative ) {
+            // Browser supports push so let it handle it
+            return;
+        }
+
+        if ( this.options.useNative ) {
+            if ("WebSocket" in window ) {
+                // No native push support but want to use Mozilla servers
+                this.options.simplePushServerURL = "wss://push.services.mozilla.com";
+            } else if ( !this.options.simplePushServerURL ) {
+                // No native push support and no websocket support so can't talk to Mozilla server
+                throw "SimplePushConfigurationError";
+            } else {
+                // No websocket, no native support but SimplePush server specified so try SockJS connection
+                this.options.useNative = false;
+            }
+        }
+
         var spClient = this,
             connectOptions = {
                 onConnect: function() {
-                    // Add push to the navigator object
+                    /**
+                        Add the push object to the global navigator object
+                        @constructs navigator.push
+                     */
                     navigator.push = (function() {
                         return {
+                            /**
+                                Register a push notification channel with the SimplePush server
+                                @constructs navigator.push.register
+                                @returns {Object} - The request object where a connection success callback can be registered
+                                @example
+                                var mailRequest = navigator.push.register();
+                             */
                             register: function() {
                                 var request = {
                                     onsuccess: function( event ) {}
@@ -861,16 +999,48 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
                                 return request;
                             },
 
+                            /**
+                                Unregister a push notification channel from the SimplePush server
+                                @constructs navigator.push.unregister
+                                @example
+                                navigator.push.unregister( mailEndpoint );
+                             */
                             unregister: function( endpoint ) {
                                 spClient.simpleNotifier.unsubscribe( endpoint );
                             },
 
+                            /**
+                                Reestablish the connection with the SimplePush server when closed or lost. This is an addition and not part of the SimplePush spec
+                                @constructs navigator.push.reconnect
+                                @param {Object} options - an object used to initialize the connection to the SimplePush server
+                                @param {String} options.simplePushServerURL - the URL of the SimplePush server
+                                @param {Function} options.onConnect - a callback to fire when a connection is established with the SimplePush server. This is a deviation from the SimplePush spec as it is not necessary when you using the in browser functionality since the browser establishes the connection before the application is started.
+                                @param {Function} options.onClose - a callback to fire when a connection to the SimplePush server is closed or lost.
+                                @example
+                                navigator.push.reconnect({
+                                    simplePushServerURL: "https://localhost:7777/simplepush",
+                                    onConnect: myConnectCallback,
+                                    onClose: myCloseCallback
+                                });
+                             */
                             reconnect: function() {
                                 spClient.simpleNotifier.connect( connectOptions );
                             }
                         };
                     })();
 
+                    /**
+                        Add the setMessageHandler function to the global navigator object
+                        @constructs navigator.setMessageHandler
+                        @param {String} messageType - a name or category to give the messages being received and in this implementation, likely 'push'
+                        @param {Function} callback - the function to be called when a message of this type is received
+                        @example
+                        navigator.setMessageHandler( "push", function( message ) {
+                            if ( message.channelID === mailEndpoint.channelID ) {
+                                console.log("Mail Message Received");
+                            }
+                        });
+                     */
                     navigator.setMessageHandler = function( messageType, callback ) {
                         $( navigator.push ).on( messageType, function( event ) {
                             var message = event.message;
@@ -892,7 +1062,8 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
             name: "agPushNetwork",
             type: "SimplePush",
             settings: {
-                connectURL: spClient.options.simplePushServerURL
+                connectURL: spClient.options.simplePushServerURL,
+                useNative: spClient.options.useNative
             }
         }).clients.agPushNetwork;
 

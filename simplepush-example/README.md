@@ -85,14 +85,14 @@ _More details on the JavaScript code are covered below...._
 
 Now that we have a connected client it is time to send a message to the client. If the above connection was successful, the browser should have logged a
 
-    Subscribed to Mail messages on {channelID} 
+    Subscribed to Mail messages on {pushEndpoint} 
 
 message.
 
 
 For sending a notification to the client take a note of the ```channelID``` and add it the the ```cURL``` command below:
 
-    curl -i --header "Accept: application/x-www-form-urlencoded" -X PUT -d "version=2" http://localhost:7777/endpoint/{channelID}
+    curl -i --header "Content-Type:application/x-www-form-urlencoded" -X PUT -d "version=2" http://localhost:7777/{pushEndpoint}
 
 This sends a ```HTTP PUT``` request to the SimplePush server and the server will deliver the message to the connected client.
 
