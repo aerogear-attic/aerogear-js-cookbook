@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v1.2.0-dev - 2013-08-07
+/*! AeroGear JavaScript Library - v1.2.0-dev - 2013-08-08
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -609,12 +609,14 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
         if ( message.messageType === "register" && message.status === 200 ) {
             channel = {
                 channelID: message.channelID,
-                pushEndpoint: message.pushEndpoint,
                 version: message.version,
                 state: "used"
             };
             pushStore.channels = this.updateChannel( pushStore.channels, channel );
             this.setPushStore( pushStore );
+
+            // Send the push endpoint to the client for app registration
+            channel.pushEndpoint = message.pushEndpoint;
 
             // Trigger registration success callback
             jQuery( navigator.push ).trigger( jQuery.Event( message.channelID + "-success", {
@@ -696,7 +698,6 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
             if ( channels[ i ].channelID === channel.channelID ) {
                 channels[ i ].version = channel.version;
                 channels[ i ].state = channel.state;
-                channels[ i ].pushEndpoint = channel.pushEndpoint;
                 break;
             }
         }
@@ -858,7 +859,6 @@ AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, 
             if ( index !== undefined ) {
                 this.bindSubscribeSuccess( pushStore.channels[ index ].channelID, channels[ i ].requestObject );
                 channels[ i ].channelID = pushStore.channels[ index ].channelID;
-                channels[ i ].pushEndpoint = pushStore.channels[ index ].pushEndpoint;
                 channels[ i ].state = "used";
 
                 // Trigger the registration event since there will be no register message

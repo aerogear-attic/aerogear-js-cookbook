@@ -14,7 +14,7 @@
             // extract the endpoint object from the event: 
             mailEndpoint = event.target.result;
             // store the channelID...
-            appendTextArea("Subscribed to Mail messages on " + mailEndpoint.pushEndpoint);
+            appendTextArea("Subscribed to Mail messages on " + mailEndpoint.channelID);
         };
 
         // set the notification handler:
