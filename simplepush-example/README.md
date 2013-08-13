@@ -28,7 +28,7 @@ Since the AeroGear polyfill library supports other browsers that may lack WebSoc
 
 ### AeroGear's SimplePush Server
 
-The [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simple-push-server) is written in Java and based on the [Netty](http://netty.io) Framework. The server supports three different runtime platforms for your deployment:
+The [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simplepush-server) is written in Java and based on the [Netty](http://netty.io) Framework. The server supports three different runtime platforms for your deployment:
 
 * standalone java process (used in this quickstart)
 * vert.x - A server plugin for the vert.x platform
@@ -43,24 +43,18 @@ Getting started!
 
 ### Building the AeroGear SimplePush Server
 
-Before diving into the JavaScript library, we need to build the [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simple-push-server). A few prerequisites are required before you can build the actual SimplePush Server:
+Before diving into the JavaScript library, we need to build the [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simplepush-server). A few prerequisites are required before you can build the actual SimplePush Server:
 
 The Netty SockJS branch:
 
-    git clone https://github.com/danbev/netty/tree/sockjs
-    cd netty
+    git clone https://github.com/danbev/netty/tree/ci
+    cd ci
     mvn install -DskipTests=true
 
-The Netty Subsystem:
+Finally clone the [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simplepush-server) git repository and build the source code:
 
-    git clone https://github.com/danbev/netty-subsystem
-    cd netty-subsystem
-    mvn install -DskipTests=true
-
-Finally clone the [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simple-push-server) git repository and build the source code:
-
-    git clone git@github.com:aerogear/aerogear-simple-push-server.git
-    cd aerogear-simple-push-server
+    git clone git@github.com:aerogear/aerogear-simplepush-server.git
+    cd aerogear-simplepush-server
     mvn install -DskipTests=true
 
 Now perform a ```cd server-netty``` and execute the following command to start the server on your machine:
@@ -85,14 +79,13 @@ _More details on the JavaScript code are covered below...._
 
 Now that we have a connected client it is time to send a message to the client. If the above connection was successful, the browser should have logged a
 
-    Subscribed to Mail messages on {pushEndpoint} 
+    Mail pushEndpoint URL: {pushEndpoint}
 
-message.
+message. In case you see a ```Mail was already registered``` message, that means your not executing this step the first time. More details below, when talking about the JavaScript.
 
+For sending a notification to the client copy the above ```URL``` and add it the the ```cURL``` command below:
 
-For sending a notification to the client take a note of the ```channelID``` and add it the the ```cURL``` command below:
-
-    curl -i --header "Content-Type:application/x-www-form-urlencoded" -X PUT -d "version=2" http://localhost:7777/{pushEndpoint}
+    curl -i --header "Content-Type:application/x-www-form-urlencoded" -X PUT -d "version=2" {pushEndpoint}
 
 This sends a ```HTTP PUT``` request to the SimplePush server and the server will deliver the message to the connected client.
 
@@ -126,15 +119,27 @@ In our polyfill library the AeroGear SimplePushClient takes a few arguments:
 Inside of the ```spConnect``` callback function we use the _PushManager_ object (```navigator.push```) to request a notification endpoint from the SimplePush server:
 
     // use 'PushManager' to request a new
-	// PushServer URL endpoint for 'mail' notifications:
-	mailRequest = navigator.push.register();
+    // PushServer URL endpoint for 'mail' notifications:
+    mailRequest = navigator.push.register();
 
 If the request was successful, the ```onsuccess``` function of the request object is invoked to perform some code which handles the successful 'registration':
 
     // the request returns 'successfully':
-    mailRequest.onsuccess = function( event ) {...}
+    mailRequest.onsuccess = function( event ) {
+        ...
+        // if it is the first registration, let's print the pushEndpoint URL.
+        // Otherwise we indicate that a registration has already happened 
+        if ( mailEndpoint.pushEndpoint ) {
+            appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint.pushEndpoint);
+        } else {
+            appendTextArea("Mail was already registered");
+        }
+        ...
+    }
 
-Besides storing the returned ```endpoint``` and logging its ```channelID``` nothing special is done here. Next we need to setup a message handler:
+If the client registeres the first time for the SimplePush channel, a ```pushEndpoint``` is passed along. This ```URL``` is used for sending notifications to _this_ client, as shown above. If a clients performs a reregistration for the channel, there is _no_ ```pushEndpoint``` passed along. Besides that, the client always logs the ```channelID``` of the returned endpoint. **_Note:_** The registered channels are stored on ```localStorage``` of your browser.
+
+Next we need to setup a message handler:
 
     // set the notification handler:
     navigator.setMessageHandler( "push", function( message ) {

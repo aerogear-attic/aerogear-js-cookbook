@@ -10,9 +10,17 @@
 
         // the DOMRequest returns 'successfully':
         mailRequest.onsuccess = function( event ) {
-            
             // extract the endpoint object from the event: 
             mailEndpoint = event.target.result;
+
+            // if it is the first registration, let's print the pushEndpoint URL.
+            // Otherwise we indicate that a registration has already happened 
+            if ( mailEndpoint.pushEndpoint ) {
+                appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint.pushEndpoint);
+            } else {
+                appendTextArea("Mail was already registered");
+            }
+
             // store the channelID...
             appendTextArea("Subscribed to Mail messages on " + mailEndpoint.channelID);
         };
