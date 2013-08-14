@@ -92,7 +92,7 @@ This sends a ```HTTP PUT``` request to the SimplePush server and the server will
 **Congratulations!** You have received your first notification using AeroGear's SimplePush offerings!
 
 
-**_NOTE_:** If you want to send another push notification to that endpoint, make sure you are _increasing_ the version number (e.g. ```version=3``` or ```version=4``` in this case)! Using the name ```version``` for that given endpoint does **not** cause a push notification to be sent to the client.
+**_NOTE_:** If you want to send another push notification to that endpoint, make sure you are _increasing_ the version number (e.g. ```version=3``` or ```version=4``` in this case)! Using the same ```version``` for that given endpoint does **not** cause a push notification to be sent to the client.
 
 
 Details: The JavaScript client
