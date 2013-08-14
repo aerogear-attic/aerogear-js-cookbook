@@ -81,9 +81,9 @@ Now that we have a connected client it is time to send a message to the client. 
 
     Mail pushEndpoint URL: {pushEndpoint}
 
-message. In case you see a ```Mail was already registered``` message, that means your not executing this step the first time. More details below, when talking about the JavaScript.
+message. In case you see a ```Mail was already registered``` message, that means you're not executing this step the first time. More details in the JavaScript client section below.
 
-For sending a notification to the client copy the above ```URL``` and add it the the ```cURL``` command below:
+For sending a notification to the client, copy the above ```URL``` and add it the the ```cURL``` command below:
 
     curl -i --header "Content-Type:application/x-www-form-urlencoded" -X PUT -d "version=2" {pushEndpoint}
 
@@ -137,7 +137,7 @@ If the request was successful, the ```onsuccess``` function of the request objec
         ...
     }
 
-If the client registeres the first time for the SimplePush channel, a ```pushEndpoint``` is passed along. This ```URL``` is used for sending notifications to _this_ client, as shown above. If a clients performs a reregistration for the channel, there is _no_ ```pushEndpoint``` passed along. Besides that, the client always logs the ```channelID``` of the returned endpoint. **_Note:_** The registered channels are stored on ```localStorage``` of your browser.
+If the client registers the first time for the SimplePush channel, a ```pushEndpoint``` is passed along. This ```URL``` is used for sending notifications to _this_ client, as shown above. If a client performs a reregistration for the channel, there is _no_ ```pushEndpoint``` passed along. Besides that, the client always logs the ```channelID``` of the returned endpoint. **_Note:_** The registered channels are stored in your browser's ```localStorage```.
 
 Next we need to setup a message handler:
 
