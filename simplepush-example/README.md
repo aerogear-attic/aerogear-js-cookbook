@@ -60,7 +60,7 @@ Finally clone the [AeroGear SimplePush Server](https://github.com/aerogear/aerog
 Now perform a ```cd server-netty``` and execute the following command to start the server on your machine:
 
 
-    mvn exec:java -Dexec.args="-host=localhost -port=7777 -tls=false -ack_interval=10000 -useragent_reaper_timeout=60000" 
+    mvn exec:java -Dexec.args="-host=localhost -port=7777 -tls=false -ack_interval=10000 -useragent_reaper_timeout=60000 -token_key=yourRandomToken" 
 
 This starts an _unsecured_ instance of the AeroGear SimplePush Server on localhost using port 7777.
 
