@@ -3,7 +3,7 @@ aerogear-simplepush-unifiedpush-quickstart
 
 An example of using AeroGear's SimplePush/Unified Push JavaScript API. Based on [aerogear-simplepush-quickstart](https://github.com/aerogear/aerogear-simplepush-quickstart) enchancing to support registration with the UnifiedPush server.
 
-Please visit our [tutorial page](http://www.aerogear.org/docs/guides/aerogear-push-js/) for more information.
+Please visit our [tutorial page](http://aerogear.org/docs/guides/aerogear-push-js/) for more information.
 
 Getting started!
 ----------------
