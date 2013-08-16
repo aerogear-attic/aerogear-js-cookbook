@@ -32,7 +32,7 @@
                     deviceToken: mailEndpoint.channelID,
                     simplePushEndpoint: mailEndpoint.pushEndpoint,
                     alias: "john",
-                    category: "email"
+                    category: "mail"
                 };
 
                 // register with the server
@@ -80,7 +80,7 @@
         // set the notification handler:
         navigator.setMessageHandler( "push", function( message ) {
             if ( message.channelID === mailEndpoint.channelID ) {
-                // let's react on the 'email' endpoint
+                // let's react on the 'mail' endpoint
                 appendTextArea("Mail Notification - " + message.version);
             } else if ( message.channelID === broadcastEndpoint.channelID ) { 
                 // let's react on the 'broadcast' endpoint
