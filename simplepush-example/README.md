@@ -43,15 +43,7 @@ Getting started!
 
 ### Building the AeroGear SimplePush Server
 
-Before diving into the JavaScript library, we need to build the [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simplepush-server). A few prerequisites are required before you can build the actual SimplePush Server:
-
-The Netty SockJS branch:
-
-    git clone https://github.com/danbev/netty/tree/ci
-    cd ci
-    mvn install -DskipTests=true
-
-Finally clone the [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simplepush-server) git repository and build the source code:
+First, clone the [AeroGear SimplePush Server](https://github.com/aerogear/aerogear-simplepush-server) git repository and build the source code:
 
     git clone git@github.com:aerogear/aerogear-simplepush-server.git
     cd aerogear-simplepush-server
