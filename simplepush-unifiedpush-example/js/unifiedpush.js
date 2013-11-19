@@ -2,7 +2,7 @@
     var mailEndpoint, mailRequest, SPClient, UPClient;
 
     // config params for UnifiedPush server
-    var variantId = "<Your-Variant-ID";
+    var variantId = "<Your-Variant-ID">;
     var variantSecret = "<Your-Variant-Secret>";
     var simplePushUrl = "<URL of the running SimplePush server>";
     var unifiedPushUrl = "<URL of the running UnifiedPush server>";
@@ -32,59 +32,31 @@
                     deviceToken: mailEndpoint.channelID,
                     simplePushEndpoint: mailEndpoint.pushEndpoint,
                     alias: "john",
-                    category: "mail"
+                    categories: ["mail"]
                 };
 
+                var settings = {
+                    success: function() {
+                        console.log("Registered 'Mail' endpoint with UnifiedPush server!");
+                    },
+                    error: function() {
+                        console.log("Error when registering with UnifiedPush server!");
+                    }
+                };
+
+                settings.metadata = metadata;
+
                 // register with the server
-                UPClient.registerWithPushServer(metadata);
-
-                appendTextArea("Registered 'Mail' endpoint with UnifiedPush server!");
-
+                UPClient.registerWithPushServer(settings);
             } else {
                 appendTextArea("'Mail' was already registered!");
             }
         };
-
-        // let's request another endpoint for 'broadcast' notifications
-
-        // use 'PushManager' to request a new PushServer URL endpoint for 'broadcast' notifications:
-        broadcastRequest = navigator.push.register();
-         // the DOMRequest returns 'successfully':
-        broadcastRequest.onsuccess = function( event ) {
-            // extract the endpoint object from the event:
-            broadcastEndpoint = event.target.result;
-
-            appendTextArea("Subscribed to 'broadcast' messages on channel " + broadcastEndpoint.channelID);
-
-            // if it is the first registration, need to register
-            // the 'pushEndpoint' with the UnifiedPush server.
-            if ( broadcastEndpoint.pushEndpoint ) {
-                // assemble the metadata for registration with the UnifiedPush server
-                var metadata = {
-                    deviceToken: broadcastEndpoint.channelID,
-                    simplePushEndpoint: broadcastEndpoint.pushEndpoint,
-                    alias: "john",
-                    category: "broadcast"
-                };
-
-                // register with the server
-                UPClient.registerWithPushServer(metadata);
-
-                appendTextArea("Registered 'broadcast' endpoint with UnifiedPush server!");
-
-            } else {
-                appendTextArea("'broadcast' was already registered!");
-            }
-        };
-
         // set the notification handler:
         navigator.setMessageHandler( "push", function( message ) {
             if ( message.channelID === mailEndpoint.channelID ) {
                 // let's react on the 'mail' endpoint
                 appendTextArea("Mail Notification - " + message.version);
-            } else if ( message.channelID === broadcastEndpoint.channelID ) {
-                // let's react on the 'broadcast' endpoint
-                appendTextArea("Broadcast Notification - " + message.version);
             }
         });
     }
