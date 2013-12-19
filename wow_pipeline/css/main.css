@@ -1,0 +1,15 @@
+.hidden {
+    display: none;
+}
+
+.topcoat-search-input {
+    width: 100%;
+}
+
+.checkmark {
+    color: green;
+}
+
+.error {
+    color: red;
+}

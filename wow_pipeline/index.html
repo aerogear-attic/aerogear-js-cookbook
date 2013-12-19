@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width">
+            <title>WoW Realm Status</title>
+            <link rel="stylesheet" href="bower_components/topcoat/css/topcoat-mobile-light.min.css">
+            <link rel="stylesheet" href="bower_components/topcoat-icons/font/icomatic.css">
+            <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        <div class="topcoat-navigation-bar">
+            <div class="topcoat-navigation-bar__item quarter">
+                <span class="icomatic icon">refresh</span>
+            </div>
+            <div class="topcoat-navigation-bar__item center half">
+                <h1 class="topcoat-navigation-bar__title">Realms</h1>
+            </div>
+        </div>
+        <section id="realms">
+            <div>
+                <input type="search" value="" placeholder="search" class="topcoat-search-input" disabled>
+            </div>
+            <ul class="topcoat-list__container"></ul>
+        </section>
+        <script src="bower_components/jquery/jquery.min.js"></script>
+        <script src="bower_components/aerogear/aerogear.js"></script> <!--In production, use the minified version-->
+        <script src="js/app.js"></script>
+    </body>
+</html>
