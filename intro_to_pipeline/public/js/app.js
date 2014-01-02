@@ -2,7 +2,7 @@ var app = {
     agPipes: {},
     _addToUI: function( dataz ) {
             var i = 0,
-                putItHere = $("ul.topcoat-list__container");
+                putItHere = $( "ul.topcoat-list__container" );
 
             putItHere.empty();
 
@@ -14,7 +14,7 @@ var app = {
     },
     _header: function( event ) {
 
-        if( $(event.target).hasClass('refresh') ) {
+        if( $(event.target).hasClass( "refresh" ) ) {
             // call refresh
             app.refresh();
         } else {
@@ -24,7 +24,7 @@ var app = {
     },
     _listClick: function( event ) {
         var target = event.target,
-            li = $( target ).closest( 'li' ),
+            li = $( target ).closest( "li" ),
             id = li[ 0 ].id,
             targetText = $( target ).text();
 
@@ -50,9 +50,9 @@ var app = {
             id: id,
             success: function( response ) {
                 if( isEdit ) {
-                    $("input[name='id']").val( response[ 0 ].id );
-                    $("input[name='name']").val( response[ 0 ].name );
-                    $("input[name='type']").val( response[ 0 ].type );
+                    $( "input[name='id']" ).val( response[ 0 ].id );
+                    $( "input[name='name']" ).val( response[ 0 ].name );
+                    $( "input[name='type']" ).val( response[ 0 ].type );
 
                     app._togglePage( "edit" );
                     return;
@@ -70,7 +70,7 @@ var app = {
             {
                 success: function( response ) {
                     // clean the form
-                    $("form")[0].reset();
+                    $( "form" )[0].reset();
 
                     // Toggle
                     app._togglePage( "main" );
@@ -93,7 +93,7 @@ var app = {
         });
     },
     refresh: function() {
-        $("ul.topcoat-list__container").empty();
+        $( "ul.topcoat-list__container" ).empty();
 
         app.read();
     },
