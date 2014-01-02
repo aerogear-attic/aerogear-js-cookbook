@@ -12,6 +12,10 @@ var app = {
                 putItHere.append( "<li class='topcoat-list__item' id='" + dataz[ i ].id + "'><span class='icomatic icon'>delete</span>&nbsp;&nbsp;<span class='icomatic icon'>pencil</span>&nbsp;&nbsp;" + dataz[ i ].name + " : " + dataz[ i ].type );
             }
     },
+    _refreshForm: function() {
+        $( "form" )[0].reset();
+        $( "form input[name='id']" ).removeAttr( "value" );
+    },
     _header: function( event ) {
 
         if( $(event.target).hasClass( "refresh" ) ) {
@@ -44,6 +48,10 @@ var app = {
 
         app.save( data );
     },
+    _cancel: function() {
+        app._refreshForm();
+        app._togglePage();
+    },
     read: function( id, isEdit ) {
 
         app.agPipes.items.read({
@@ -70,8 +78,7 @@ var app = {
             {
                 success: function( response ) {
                     // clean the form
-                    $( "form" )[0].reset();
-                    $( "form input[name='id']" ).removeAttr( "value" );
+                    app._refreshForm();
 
                     // Toggle
                     app._togglePage( "main" );
@@ -111,6 +118,7 @@ var app = {
         //Add some event handlers
         $( ".topcoat-navigation-bar__item span.icon" ).on( "click", app._header );
         $( "form" ).on( "submit", app._formSubmit );
+        $( "input[name='cancel']" ).on( "click", app._cancel );
         $( "ul" ).on( "click", app._listClick );
 
         //Setup our Pipeline
