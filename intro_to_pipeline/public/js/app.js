@@ -71,6 +71,7 @@ var app = {
                 success: function( response ) {
                     // clean the form
                     $( "form" )[0].reset();
+                    $( "form input[name='id']" ).removeAttr( "value" );
 
                     // Toggle
                     app._togglePage( "main" );
