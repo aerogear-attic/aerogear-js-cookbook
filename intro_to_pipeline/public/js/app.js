@@ -20,9 +20,9 @@ var app = {
 
             putItHere.empty();
 
-            // The realms object is an array that contains all the realms
+            // The dataz object is an array that contains all the items
             for( i; i < dataz.length; i++ ) {
-                // Just adding a Realm's name to the list
+                // Just adding the object's id, name and type to the list
                 putItHere.append( "<li class='topcoat-list__item' id='" + dataz[ i ].id + "'><span class='icomatic icon'>delete</span>&nbsp;&nbsp;<span class='icomatic icon'>pencil</span>&nbsp;&nbsp;" + dataz[ i ].name + " : " + dataz[ i ].type );
             }
     },
@@ -31,7 +31,6 @@ var app = {
         $( "form input[name='id']" ).removeAttr( "value" );
     },
     _header: function( event ) {
-
         if( $(event.target).hasClass( "refresh" ) ) {
             // call refresh
             app.refresh();
@@ -50,7 +49,7 @@ var app = {
             // Get the ID and Call remove
             app.remove( id );
         } else if( targetText === "pencil" ) {
-            // Edit?
+            // First read the data from the server and then edit
             app.read( id, true );
 
         }
@@ -60,6 +59,7 @@ var app = {
 
         var data = $( this ).serializeObject();
 
+        //Save the Data
         app.save( data );
     },
     _cancel: function() {
@@ -67,7 +67,11 @@ var app = {
         app._togglePage();
     },
     read: function( id, isEdit ) {
-
+        // Call the pipe "read" method.
+        // This will make a GET request to http://HOST:PORT/items
+        // If an ID is specified the GET request will look like this http://HOST:PORT/items/SOME_ID
+        // So for example where id is not defined,  http://localhost:3000/items
+        // We are using callbacks here to handle the success and error responses,  but promises could also be used
         app.agPipes.items.read({
             id: id,
             success: function( response ) {
@@ -87,6 +91,10 @@ var app = {
             }
         });
     },
+    // Call the pipe "save" method.
+    // This will make a POST request to http://HOST:PORT/items
+    // If an "id" is defined in the object, then a PUT request will be made to the endpoint
+    // We are using callbacks here to handle the success and error responses,  but promises could also be used
     save: function( data ) {
         app.agPipes.items.save( data,
             {
@@ -104,6 +112,9 @@ var app = {
             }
         );
     },
+    // Call the pipe "remove" method.
+    // This will make a DELETE request to http://HOST:PORT/items/ID
+    // We are using callbacks here to handle the success and error responses,  but promises could also be used
     remove: function( id ) {
         app.agPipes.items.remove( id, {
             success: function( response ) {
@@ -135,10 +146,11 @@ var app = {
         $( "input[name='cancel']" ).on( "click", app._cancel );
         $( "ul" ).on( "click", app._listClick );
 
-        //Setup our Pipeline
+        //Setup our Pipeline.
         var pipeline = AeroGear.Pipeline(),
             items;
 
+        //Create a new "pipe" called "items".  It's endpoint will be http://HOST:PORT/items
         pipeline.add( "items" );
 
         app.agPipes.items = pipeline.pipes.items;
@@ -148,6 +160,7 @@ var app = {
     }
 };
 
+//Initialize our Application
 app.init();
 
 // Serializes a form to a JavaScript Object
