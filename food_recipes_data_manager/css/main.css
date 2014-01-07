@@ -1,0 +1,33 @@
+.hidden {
+    display: none;
+}
+
+.floatRight {
+    float: right;
+}
+
+.content {
+    padding: 1rem;
+}
+
+.ingredients {
+    font-size: .9rem;
+}
+
+.icon.back, .icon.plus {
+    color: #007AFF;
+}
+
+.topcoat-textarea {
+    font-size: 1rem;
+    padding: .5rem;
+    line-height: 1rem;
+}
+
+div.reset {
+    padding-top: .5265rem;
+}
+
+/*.icon.next {
+    color: #C7C7CC;
+}*/

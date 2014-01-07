@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, user-scalable=0">
+            <title>Food Recipes</title>
+            <link rel="stylesheet" href="bower_components/topcoat/css/topcoat-mobile-light.min.css">
+            <link rel="stylesheet" href="bower_components/topcoat-icons/font/icomatic.css">
+            <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        <section id="main">
+            <div class="topcoat-navigation-bar">
+                <div class="topcoat-navigation-bar__item quarter reset">
+                    <button class="topcoat-button--quiet reset">Reset</button>
+                </div>
+                <div class="topcoat-navigation-bar__item center half">
+                    <h1 class="topcoat-navigation-bar__title">Recipes</h1>
+                </div>
+                <div class="topcoat-navigation-bar__item right quarter">
+                    <span class="icomatic icon plus">plus</span>
+                </div>
+            </div>
+            <ul class="topcoat-list__container"></ul>
+        </section>
+        <section id="details" class="hidden">
+            <div class="topcoat-navigation-bar">
+                <div class="topcoat-navigation-bar__item quarter back">
+                    <span class="icomatic icon back">back Recipes</span>
+                </div>
+            </div>
+            <div class="content"></div>
+        </section>
+        <section id="add" class="hidden">
+            <div class="topcoat-navigation-bar">
+                <div class="topcoat-navigation-bar__item quarter back">
+                    <span class="icomatic icon back">back Recipes</span>
+                </div>
+            </div>
+            <div class="full center">
+                <h3>Enter a New Recipe</h3>
+                <form>
+                    <input type="hidden" name="id">
+                    <input type="text" class="topcoat-text-input" placeholder="Title" name="title" value="">
+                    <br></br>
+                    <textarea class="topcoat-textarea" rows="5" cols="23" placeholder="Ingredients" name="ingredients"></textarea>
+                    <br><br>
+                    <textarea class="topcoat-textarea" rows="10" cols="23" placeholder="Instructions" name="description"></textarea>
+                    <br><br>
+                    <input type="submit" class="topcoat-button--quiet">
+                    <input type="button" class="topcoat-button--quiet" name="cancel" value="Cancel">
+                </form>
+            </div>
+        </section>
+
+        <script type="text/template" id="item">
+            <li class='topcoat-list__item' id='<%=id%>'>
+                <%=title%>
+                <div class='floatRight'>
+                    <span class='icomatic icon next'>next</span>
+                </div>
+            </li>
+        </script>
+
+        <script type="text/template" id="itemDetail">
+            <div class="full left">
+                <h2><%=title%></h2>
+                <div class="ingredients">
+                    <%=ingredients.replace(new RegExp('\r?\n', 'g'), '<br />')%>
+                </div>
+                <h3>Instructions</h3>
+                <div>
+                    <%=description.replace(new RegExp('\r?\n', 'g'), '<br />')%>
+                </div>
+            </div>
+        </script>
+        <script src="bower_components/jquery/jquery.min.js"></script>
+        <script src="bower_components/lodash/dist/lodash.min.js"></script> <!--A more optimized version of the underscore library -->
+        <script src="bower_components/aerogear/aerogear.js"></script> <!--In production, use the minified version-->
+        <script src="js/app.js"></script>
+    </body>
+</html>
