@@ -2,7 +2,7 @@
     var mailEndpoint, mailRequest, SPClient, UPClient;
 
     // config params for UnifiedPush server
-    var variantId = "<Your-Variant-ID">;
+    var variantId = "<Your-Variant-ID>";
     var variantSecret = "<Your-Variant-Secret>";
     var simplePushUrl = "<URL of the running SimplePush server>";
     var unifiedPushUrl = "<URL of the running UnifiedPush server>";
