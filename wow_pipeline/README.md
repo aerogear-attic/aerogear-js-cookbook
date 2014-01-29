@@ -44,6 +44,8 @@ To run the example code, first run:
 
 This will pull down the dependent javascript/css files, such as jquery, into the project.
 
+_Note:  Notice that we are not using the whole AeroGear.js library, but just the Pipeline part.  Certain "Components" of AeroGear are also available on bower_
+
 Since we are making cross domain requests,  this example can't run from a file, but instead needs to run on a server.
 
 One option is to run a python 'SimpleHTTPServer'
