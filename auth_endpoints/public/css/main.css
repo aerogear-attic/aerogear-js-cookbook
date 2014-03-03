@@ -1,0 +1,18 @@
+.hidden {
+    display: none;
+}
+
+.errors {
+    padding-top: .5265rem;
+    color: red;
+    font-weight: bold;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.topcoat-list__item.secured_items {
+    text-align: left;
+    padding-bottom: 1rem;
+}
