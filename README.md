@@ -33,5 +33,20 @@ A small app to run.
 
 Each app will be heavily documented on what is going on
 
+### Recipes
+
+To get the recipes, clone this repo:
+
+    $ git clone git@github.com:aerogear/aerogear-js-cookbook.git
+
+    $ cd aerogear-js-cookbook
+
+The UnifiedPush and SimplePush recipes are submodules, so you will need also run these commands:
+
+    $ git submodule init
+
+    $ git submodule update
 
 ### Contributing Cookbook Recipes
+
+TBD
