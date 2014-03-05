@@ -1,8 +1,22 @@
-## AeroGear.js OAuth2 Test - Access Google Drive
+Google Drive
+===============================
+
+**Problem**
+
+We want to interact with a secured service, like Google Drive, that uses OAuth2 Authorization
+
+**Solution**
 
 This purpose of this repo is to show how to use the OAuth2 adapter in AeroGear.js and how it integrates into Pipeline
 
 Basically, it will ask for your permission for this app to access your google drive account and then list the files you have
+
+**Working Code Example**
+To run the example code, first run:
+
+    $ bower install
+
+This will pull down the dependent javascript/css files, such as jquery, into the project.
 
 You need to have Client ID and credentials with permissions to access Google Drive. You can get one by following these steps:
 
@@ -13,17 +27,13 @@ You need to have Client ID and credentials with permissions to access Google Dri
 5. In APIs & auth / Credentials create New Client ID
 6. Make sure you white list http://localhost:9000 in JavaScript origins and you put http://localhost:9000/redirector.html into Redirects URIs
 
-After cloning the repo, run:
+Then modify app/scripts/main.js authz object to contain client ID generated for you.
 
-    $ npm install && bower install
+One option is to run a python 'SimpleHTTPServer'
 
-Then modify app/scripts/main.js authz object to contain client ID generated for you.   
+    $ python -m SimpleHTTPServer
 
-Then
-
-    $ grunt server
-
-The web app will then be available at [localhost:9000](http://localhost:9000)
+Now the page can be accessed at [localhost:8000](http://localhost:8000/)
 
 
-_Warning: There will be bugs  :)_
+
