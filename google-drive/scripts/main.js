@@ -10,7 +10,7 @@ authz.add({
     name: "drive",
     settings: {
         clientId: "1038594593085.apps.googleusercontent.com",
-        redirectURL: "http://localhost:8000/app/redirector.html",
+        redirectURL: "http://localhost:8000/redirector.html",
         authEndpoint: "https://accounts.google.com/o/oauth2/auth",
         validationEndpoint: "https://www.googleapis.com/oauth2/v1/tokeninfo",
         scopes: "https://www.googleapis.com/auth/drive"
@@ -54,7 +54,7 @@ function validateResponse( responseFromAuthEndpoint, callback ) {
 function dance( authURL, callback ) {
     //console.log( authURL );
     //console.log( "Opening Auth URL" );
-    authWindow = window.open( authURL );
+    authWindow = window.open( authURL, "Auth Dance" );
     //Watch the window for the location to change
     timer = setInterval( function() {
         if( authWindow.closed ) {
@@ -76,7 +76,7 @@ function dance( authURL, callback ) {
             clearInterval( timer );
             //console.log( "Child Window has closed" );
         }
-    }, 100 );
+    }, 1000 );
 
     authWindow.focus();
 }
