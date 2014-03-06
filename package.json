@@ -1,0 +1,29 @@
+{
+  "name": "aerogear-js-cookbook",
+  "title": "AeroGear JavaScript Library Cookbook",
+  "description": "Cookbook example for the AeroGear.js Library",
+  "version": "0.1.0-dev",
+  "homepage": "https://github.com/aerogear/aerogear-js-cookbok",
+  "author": {
+    "name": "Red Hat, Inc.",
+    "url": "http://aerogear.org"
+  },
+  "maintainers": {
+    "name": "Lucas Holmquist",
+    "email": "lholmqui@redhat.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "aerogear/aerogear-js-cookbok.git"
+  },
+  "bugs": {
+    "url": "https://issues.jboss.org/browse/AGJS"
+  },
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "keywords": []
+}
