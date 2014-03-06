@@ -64,7 +64,7 @@ $(function() {
         });
     }
 
-    // This code i really DO NOT want to put into AeroGear.js
+    // This will do the OAuth2 Dance, which is to open a separate window that asks for you permission.
     // I've noticed that on Mobile Safari,  when you have to also sign into google that the child window is not closed by the parent
     function dance( authURL, callback ) {
         authWindow = window.open( authURL, "Auth Dance" );
@@ -110,6 +110,7 @@ $(function() {
             })
             .then( null, function( error ) {
                 $( "#dance" ).removeAttr( "disabled" );
+
                 // If the Authz fails, then we will get a url constructed for us, that we need to do something with to Authenticate
                 // It also needs to be user initiated since most browsers will block the window that needs to be opened
                 authURL = error.authURL;
