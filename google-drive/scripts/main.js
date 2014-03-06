@@ -1,12 +1,14 @@
-//Just for the Demo,  clear out the access token and stuff
+// Just for the Demo,  clear out the access token and stuff
 window.localStorage.removeItem('ag-oauth2-1038594593085.apps.googleusercontent.com');
 
 $(function() {
 
     var pipeline, filesPipe, authWindow, timer, authURL, callback,
+    // Create a new AeroGear.Authorizer
     authz = AeroGear.Authorization();
 
-    // Adding an Authorizer
+    // Adding an authorizer service named "drive"
+    // You will need to substitute the "clientId" with the values you receive in the google cloud console
     authz.add({
         name: "drive",
         settings: {
@@ -31,6 +33,8 @@ $(function() {
 
     filesPipe = pipeline.pipes.files;
 
+    // Setup event Handlers
+
     $( "#list_files" ).on( "click", function() {
         readFilesPipe();
     });
@@ -42,20 +46,9 @@ $(function() {
         }
     });
 
-    $( "ul.topcoat-list__container").on( "click", function( events ) {
-        var target = $( events.target ),
-            id;
-
-        if( target.hasClass( "icon" ) ) {
-            id = $(target).closest("li")[0].id;
-            deleteItem( id );
-        }
-    });
-
-    function validateResponse( responseFromAuthEndpoint, callback ) {
     // Once we finish the "dance" we need to parse the query String that is returned to make sure it's ok
     // Google recommends that we also send another request to a "validate" endpoint,  but that is not in the spec.
-    // This good be part of the library, maybe
+    function validateResponse( responseFromAuthEndpoint, callback ) {
 
         authz.services.drive.validate( responseFromAuthEndpoint,{
             success: function( response ) {
@@ -112,7 +105,7 @@ $(function() {
 
                 for( i = 0; i < itemLength; i++ ) {
                     item = items[ i ];
-                    putItHere.append( "<li class='topcoat-list__item' id='" + item.id + "'><span class='icomatic icon'>delete</span>&nbsp;&nbsp;<img src='" + item.iconLink + "'> " + item.title + ( item.labels.trashed ? " - In Trash" : "" ) );
+                    putItHere.append( "<li class='topcoat-list__item' id='" + item.id + "'><img src='" + item.iconLink + "'> " + item.title + ( item.labels.trashed ? " - In Trash" : "" ) );
                 }
             })
             .then( null, function( error ) {
@@ -125,19 +118,6 @@ $(function() {
             })
             .always( function() {
                 $( ".topcoat-notification.loading" ).hide();
-            });
-    }
-
-    // Careful,  this will delete the item from drive.
-    // Does not move to the trash
-    // Does not ask if you are certain either
-    function deleteItem( itemID ) {
-        filesPipe.remove( itemID )
-            .then( function() {
-                $( "#"+itemID ).remove();
-            })
-            .then( null, function( error ) {
-                console.log( "errors", error );
             });
     }
 });
