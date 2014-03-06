@@ -25,11 +25,11 @@ You need to have Client ID and credentials with permissions to access Google Dri
 3. Create new project
 4. In APIs & auth / APIs enable Drive API
 5. In APIs & auth / Credentials create New Client ID
-6. Make sure you white list http://localhost:9000 in JavaScript origins and you put http://localhost:9000/redirector.html into Redirects URIs
+6. Make sure you white list http://localhost:8000 in JavaScript origins and you put http://localhost:8000/redirector.html into Redirects URIs
 
 Then modify app/scripts/main.js authz object to contain client ID generated for you.
 
-One option is to run a python 'SimpleHTTPServer'
+You will need to run this on a server, one option is to run a python 'SimpleHTTPServer'
 
     $ python -m SimpleHTTPServer
 
