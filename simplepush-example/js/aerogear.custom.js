@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v1.2.0-dev - 2013-08-08
+/*! AeroGear JavaScript Library - v1.5.0-dev - 2014-05-09
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -13,6 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+(function( window, undefined ) {
+
 /**
     The AeroGear namespace provides a way to encapsulate the library's properties and methods away from the global namespace
     @namespace
@@ -41,26 +43,40 @@ AeroGear.Core = function() {
         var i,
             current,
             collection = this[ this.collectionName ] || {};
+        this[ this.collectionName ] = collection;
 
         if ( !config ) {
             return this;
         } else if ( typeof config === "string" ) {
             // config is a string so use default adapter type
-            collection[ config ] = AeroGear[ this.lib ].adapters[ this.type ]( config );
-        } else if ( AeroGear.isArray( config ) ) {
+            collection[ config ] = AeroGear[ this.lib ].adapters[ this.type ]( config, this.config );
+        } else if ( Array.isArray( config ) ) {
             // config is an array so loop through each item in the array
             for ( i = 0; i < config.length; i++ ) {
                 current = config[ i ];
 
                 if ( typeof current === "string" ) {
-                    collection[ current ] = AeroGear[ this.lib ].adapters[ this.type ]( current );
+                    collection[ current ] = AeroGear[ this.lib ].adapters[ this.type ]( current, this.config );
                 } else {
-                    collection[ current.name ] = AeroGear[ this.lib ].adapters[ current.type || this.type ]( current.name, current.settings || {} );
+                    if( current.name ) {
+
+                        // Merge the Module( pipeline, datamanger, ... )config with the adapters settings
+                        current.settings = AeroGear.extend( current.settings || {}, this.config );
+
+                        collection[ current.name ] = AeroGear[ this.lib ].adapters[ current.type || this.type ]( current.name, current.settings );
+                    }
                 }
             }
         } else {
+            if( !config.name ) {
+                return this;
+            }
+
+            // Merge the Module( pipeline, datamanger, ... )config with the adapters settings
             // config is an object so use that signature
-            collection[ config.name ] = AeroGear[ this.lib ].adapters[ config.type || this.type ]( config.name, config.settings || {} );
+            config.settings = AeroGear.extend( config.settings || {}, this.config );
+
+            collection[ config.name ] = AeroGear[ this.lib ].adapters[ config.type || this.type ]( config.name, config.settings );
         }
 
         // reset the collection instance
@@ -83,7 +99,7 @@ AeroGear.Core = function() {
         if ( typeof config === "string" ) {
             // config is a string so delete that item by name
             delete collection[ config ];
-        } else if ( AeroGear.isArray( config ) ) {
+        } else if ( Array.isArray( config ) ) {
             // config is an array so loop through each item in the array
             for ( i = 0; i < config.length; i++ ) {
                 current = config[ i ];
@@ -110,10 +126,26 @@ AeroGear.Core = function() {
     Utility function to test if an object is an Array
     @private
     @method
+    @deprecated
     @param {Object} obj - This can be any object to test
 */
 AeroGear.isArray = function( obj ) {
-    return ({}).toString.call( obj ) === "[object Array]";
+    return Array.isArray( obj );
+};
+
+/**
+    Utility function to merge 2 Objects together.
+    @private
+    @method
+    @param {Object} obj1 - An Object to be merged.
+    @param {Object} obj2 - An Object to be merged.  This Objects Value takes precendence.
+*/
+AeroGear.extend = function( obj1, obj2 ) {
+    var name;
+    for( name in obj2 ) {
+        obj1[ name ] = obj2[ name ];
+    }
+    return obj1;
 };
 
 /**
@@ -135,6 +167,11 @@ AeroGear.isArray = function( obj ) {
     @param {Object} data - The data, if any, returned in the response
     @param {String} textStatus - The text status message returned from the server
     @param {Object} jqXHR - The jQuery specific XHR object
+ */
+ /**
+    This callback is executed when an HTTP progress message is returned during a request.
+    @callback AeroGear~progressCallbackREST
+    @param {Object} XMLHttpRequestProgressEvent - The progress event
  */
 /**
     This callback is executed when an error is encountered saving to local or session storage.
@@ -400,6 +437,7 @@ AeroGear.isArray = function( obj ) {
 
 /**
     The AeroGear.Notifier namespace provides a messaging API. Through the use of adapters, this library provides common methods like connect, disconnect, subscribe, unsubscribe and publish.
+    @status Stable
     @class
     @augments AeroGear.Core
     @param {String|Array|Object} [config] - A configuration for the client(s) being created along with the notifier. If an object or array containing objects is used, the objects can have the following properties:
@@ -486,6 +524,7 @@ AeroGear.Notifier.DISCONNECTED = 3;
 
 /**
     This adapter allows communication with the AeroGear implementation of the SimplePush server protocol. Most of this functionality will be hidden behind the SimplePush client polyfill but is accessible if necessary.
+    @status Experimental
     @constructs AeroGear.Notifier.adapters.SimplePush
     @param {String} clientName - the name used to reference this particular notifier client
     @param {Object} [settings={}] - the settings to be passed to the adapter
@@ -718,11 +757,12 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
     };
 };
 
-//Public Methods
+// Public Methods
 /**
     Connect the client to the messaging service
     @param {Object} [options] - Options to pass to the connect method
     @param {String} [options.url] - The URL for the messaging service. This url will override and reset any connectURL specified when the client was created.
+    @param {Array} [options.protocols_whitelist] -  A list protocols that may be used by SockJS. By default all available protocols will be used, which is equivalent to supplying: "['websocket', 'xdr-streaming', 'xhr-streaming', 'iframe-eventsource', 'iframe-htmlfile', 'xdr-polling', 'xhr-polling', 'iframe-xhr-polling', 'jsonp-polling']"
     @param {Function} [options.onConnect] - callback to be executed when a connection is established and hello message has been acknowledged
     @param {Function} [options.onConnectError] - callback to be executed when connecting to a service is unsuccessful
     @param {Function} [options.onClose] - callback to be executed when a connection to the server is closed
@@ -749,7 +789,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.connect = function( options ) {
     options = options || {};
 
     var that = this,
-        client = this.getUseNative() ? new WebSocket( options.url || this.getConnectURL() ) : new SockJS( options.url || this.getConnectURL() );
+        client = this.getUseNative() ? new WebSocket( options.url || this.getConnectURL() ) : new SockJS( options.url || this.getConnectURL(), undefined, options );
 
     client.onopen = function() {
         // Immediately send hello message
@@ -848,7 +888,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, 
         this.unsubscribe( this.getChannels() );
     }
 
-    channels = AeroGear.isArray( channels ) ? channels : [ channels ];
+    channels = Array.isArray( channels ) ? channels : [ channels ];
     pushStore.channels = pushStore.channels || [];
     channelLength = pushStore.channels.length;
 
@@ -910,7 +950,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, 
 AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels ) {
     var client = this.getClient();
 
-    channels = AeroGear.isArray( channels ) ? channels : [ channels ];
+    channels = Array.isArray( channels ) ? channels : [ channels ];
     for ( var i = 0; i < channels.length; i++ ) {
         client.send( '{"messageType": "unregister", "channelID": "' + channels[ i ].channelID + '"}');
     }
@@ -919,7 +959,8 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
 (function( AeroGear, $, undefined ) {
     /**
         The SimplePushClient object is used as a sort of polyfill/implementation of the SimplePush spec implemented in Firefox OS and the Firefox browser and provides a mechanism for subscribing to and acting on push notifications in a web application. See https://wiki.mozilla.org/WebAPI/SimplePush
-        @constructs AeroGear.UnifiedPushClient
+        @status Experimental
+        @constructs AeroGear.SimplePushClient
         @param {Object} options - an object used to initialize the connection to the SimplePush server
         @param {Boolean} [options.useNative=false] - if true, the connection will first try to use the Mozilla push network (still in development and not ready for production) before falling back to the SimplePush server specified
         @param {String} [options.simplePushServerURL] - the URL of the SimplePush server. This option is optional but only if you don't want to support browsers that are missing websocket support and you trust the not yet production ready Mozilla push server.
@@ -927,7 +968,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
         @param {Function} options.onClose - a callback to fire when a connection to the SimplePush server is closed or lost.
         @returns {Object} The created unified push server client
         @example
-        //Create the SimplePushClient object:
+        // Create the SimplePushClient object:
         var client = AeroGear.SimplePushClient({
             simplePushServerURL: "https://localhost:7777/simplepush",
             onConnect: myConnectCallback,
@@ -965,14 +1006,21 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
             connectOptions = {
                 onConnect: function() {
                     /**
+                        The window.navigator object
+                        @namespace navigator
+                     */
+
+                    /**
                         Add the push object to the global navigator object
+                        @status Experimental
                         @constructs navigator.push
                      */
                     navigator.push = (function() {
                         return {
                             /**
                                 Register a push notification channel with the SimplePush server
-                                @constructs navigator.push.register
+                                @function
+                                @memberof navigator.push
                                 @returns {Object} - The request object where a connection success callback can be registered
                                 @example
                                 var mailRequest = navigator.push.register();
@@ -1001,7 +1049,8 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
 
                             /**
                                 Unregister a push notification channel from the SimplePush server
-                                @constructs navigator.push.unregister
+                                @function
+                                @memberof navigator.push
                                 @example
                                 navigator.push.unregister( mailEndpoint );
                              */
@@ -1011,7 +1060,8 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
 
                             /**
                                 Reestablish the connection with the SimplePush server when closed or lost. This is an addition and not part of the SimplePush spec
-                                @constructs navigator.push.reconnect
+                                @function
+                                @memberof navigator.push
                                 @param {Object} options - an object used to initialize the connection to the SimplePush server
                                 @param {String} options.simplePushServerURL - the URL of the SimplePush server
                                 @param {Function} options.onConnect - a callback to fire when a connection is established with the SimplePush server. This is a deviation from the SimplePush spec as it is not necessary when you using the in browser functionality since the browser establishes the connection before the application is started.
@@ -1031,6 +1081,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
 
                     /**
                         Add the setMessageHandler function to the global navigator object
+                        @status Experimental
                         @constructs navigator.setMessageHandler
                         @param {String} messageType - a name or category to give the messages being received and in this implementation, likely 'push'
                         @param {Function} callback - the function to be called when a message of this type is received
@@ -1070,98 +1121,4 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
         spClient.simpleNotifier.connect( connectOptions );
     };
 })( AeroGear, jQuery );
-
-(function( AeroGear, $, undefined ) {
-    /**
-        The UnifiedPushClient object is used to perfom register and unregister operations against the AeroGear UnifiedPush server.
-        @constructs AeroGear.UnifiedPushClient
-        @param {String} variantID - the id representing the mobile application variant
-        @param {String} variantSecret - the secret for the mobile application variant
-        @param {String} pushServerURL - the location of the UnifiedPush server
-        @returns {Object} The created unified push server client
-        @example
-        //Create the UnifiedPush client object:
-        var client = AeroGear.UnifiedPushClient(
-            "myVariantID",
-            "myVariantSecret",
-            "http://SERVER:PORT/CONTEXT/rest/registry/device"
-        );
-
-        // assemble the metadata for the registration:
-        var metadata = {
-            deviceToken: "theDeviceToken",
-            alias: "some_username",
-            category: "email"
-        };
-
-        // perform the registration against the UnifiedPush server:
-        client.registerWithPushServer(metadata);
-
-     */
-    AeroGear.UnifiedPushClient = function( variantID, variantSecret, pushServerURL ) {
-
-        // we require all arguments to be present, otherwise it does not work
-        if ( !variantID || !variantSecret || !pushServerURL ) {
-            throw "UnifiedPushClientException";
-        }
-
-        // Allow instantiation without using new
-        if ( !( this instanceof AeroGear.UnifiedPushClient ) ) {
-            return new AeroGear.UnifiedPushClient( variantID, variantSecret, pushServerURL );
-        }
-
-        /**
-            Performs a register request against the UnifiedPush Server using the given metadata which represents a client that wants to register with the server.
-            @param {Object} metadata - the metadata for the client
-            @param {String} metadata.deviceToken - identifies the client within its PushNetwork. On Android this is the registrationID, on iOS this is the deviceToken and on SimplePush this is the channelID of the subscribed channel.
-            @param {String} [metadata.alias] - Application specific alias to identify users with the system. Common use case would be an email address or a username.
-            @param {String} [metadata.category] - In SimplePush this is the name of the registration endpoint. On Hybrid platforms like Apache Cordova this is used for tagging the registered client.
-            @param {String} [metadata.operatingSystem] - Useful on Hybrid platforms like Apache Cordova to specifiy the underlying operating system.
-            @param {String} [metadata.osVersion] - Useful on Hybrid platforms like Apache Cordova to specify the version of the underlying operating system.
-            @param {String} [metadata.deviceType] - Useful on Hybrid platforms like Apache Cordova to specify the type of the used device, like iPad or Android-Phone.
-         */
-        this.registerWithPushServer = function( metadata ) {
-
-            // we need a deviceToken, registrationID or a channelID:
-            if ( !metadata.deviceToken ) {
-                throw "UnifiedPushRegistrationException";
-            }
-
-            // if we see a category that is not the (SimplePush) broadcast, we require the alias to be present:
-            if ( metadata.category !== "broadcast" && !metadata.alias ) {
-                throw "UnifiedPushRegistrationException";
-            }
-
-            $.ajax({
-                contentType: "application/json",
-                dataType: "json",
-                type: "POST",
-                url: pushServerURL,
-                headers: {
-                    "Authorization": "Basic " + window.btoa(variantID + ":" + variantSecret)
-                },
-                data: JSON.stringify( metadata )
-            });
-        };
-
-        /**
-            Performs an unregister request against the UnifiedPush Server for the given deviceToken. The deviceToken identifies the client within its PushNetwork. On Android this is the registrationID, on iOS this is the deviceToken and on SimplePush this is the channelID of the subscribed channel.
-            @param {String} deviceToken - unique String which identifies the client that is being unregistered.
-         */
-        this.unregisterWithPushServer = function( deviceToken ) {
-            $.ajax({
-                contentType: "application/json",
-                dataType: "json",
-                type: "DELETE",
-                url: pushServerURL + "/" + deviceToken,
-                headers: {
-                    "Authorization": "Basic " + window.btoa(variantID + ":" + variantSecret)
-                },
-                data: JSON.stringify({
-                    deviceToken: deviceToken
-                })
-            });
-        };
-    };
-
-})( AeroGear, jQuery );
+})( this );
