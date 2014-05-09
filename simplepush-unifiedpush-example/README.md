@@ -34,13 +34,8 @@ This starts an _unsecured_ instance of the AeroGear SimplePush Server on localho
 
 ### Building the AeroGear UnifiedPush Server
 
-Download the server from the [AeroGear UnifiedPush Server](https://github.com/aerogear/aerogear-unifiedpush-server) project’s github page. First, start your JBoss Application server and once that is done, simple execute on the command line the following:
-
-    cd aerogear-unified-push-server
-    mvn package jboss-as:deploy
-
-This will deploy the UnifiedPush server on your running JBoss installation, ready to accept connections. Now it’s time to perform the initial registrations with the server
-
+Download the server from the [AeroGear UnifiedPush Server](https://github.com/aerogear/aerogear-unifiedpush-server) project’s github page. Build and deploy UnifiedPush Server according to the instructions shown 
+in [README.md](https://github.com/aerogear/aerogear-unifiedpush-server/blob/master/README.md).
 
 ### Registration of the SimplePush Variant
 
@@ -66,11 +61,12 @@ Once that is done, open the ```index.html``` file in your favourite browser. You
 
 Now, issue the following CURL command to send a push notification against the UnifiedPush server. Don't forget to replace the ```PushApplicationID``` and ```MasterSecret``` you received when you registered you Application in the administration console:
 
-    curl -u "{PushApplicationID}:{MasterSecret}"
-        -v -H "Accept: application/json" -H "Content-type: application/json"
-        -X POST
-        -d '{ "key":"value", "alert":"HELLO!", "sound":"default", "badge":7,
-             "simple-push":"version=123"}' http://localhost:8080/ag-push/rest/sender/broadcast
+    curl -3 -u "{PushApplicationID}:{MasterSecret}"
+         -v -H "Accept: application/json" -H "Content-type: application/json" 
+         -X POST
+       -d '{
+           "simple-push": "version=123"
+        }' http://localhost:8080/ag-push/rest/sender
 
 Notice the message being received by the web application!
 

@@ -8,7 +8,7 @@
     var unifiedPushUrl = "<URL of the running UnifiedPush server>";
 
      // create the 'UnifiedPush' client object:
-    UPClient = AeroGear.UnifiedPushClient(variantId, variantSecret, unifiedPushUrl + "/rest/registry/device");
+    UPClient = AeroGear.UnifiedPushClient(variantId, variantSecret, unifiedPushUrl);
 
     // onConnect callback function called when SimplePush
     // successfully establishes connection to the server
