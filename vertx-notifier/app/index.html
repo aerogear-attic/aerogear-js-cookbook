@@ -1,0 +1,68 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <style>
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+      display: none !important;
+    }
+  </style>
+
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header">
+      <h1>AeroGear Notifier for Vert.x <small> The power of non-blocking async APIs...</small></h1>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">Post Message</div>
+      <div class="panel-body">
+
+        <form name="form" class="form-horizontal" role="form" ng-controller="SendController">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputName" placeholder="Name" required ng-model="name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputMessage" class="col-sm-2 control-label">Message</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputMessage" placeholder="Message Text" required ng-model="message">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-primary" ng-click="sendMessage()" ng-disabled="form.$invalid">Send Message</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <div class="well" ng-controller="ListController" ng-cloak>
+      <dl id="chat" class="dl-horizontal">
+        <dt ng-repeat-start="message in messages | reverse">{{ message.name }}</dt>
+        <dd ng-repeat-end="">{{ message.text }}</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!--[if lt IE 7]>
+      <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+
+  <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
+</body>
+</html>
