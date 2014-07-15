@@ -743,7 +743,7 @@ var define, requireModule, require, requirejs;
   };
 })();
 
-define("promise/all", 
+define("promise/all",
   ["./utils","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
@@ -840,7 +840,7 @@ define("promise/all",
 
     __exports__.all = all;
   });
-define("promise/asap", 
+define("promise/asap",
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -905,7 +905,7 @@ define("promise/asap",
 
     __exports__.asap = asap;
   });
-define("promise/cast", 
+define("promise/cast",
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -976,7 +976,7 @@ define("promise/cast",
 
     __exports__.cast = cast;
   });
-define("promise/config", 
+define("promise/config",
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -995,7 +995,7 @@ define("promise/config",
     __exports__.config = config;
     __exports__.configure = configure;
   });
-define("promise/polyfill", 
+define("promise/polyfill",
   ["./promise","./utils","exports"],
   function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
@@ -1003,7 +1003,7 @@ define("promise/polyfill",
     var isFunction = __dependency2__.isFunction;
 
     function polyfill() {
-      var es6PromiseSupport = 
+      var es6PromiseSupport =
         "Promise" in window &&
         // Some of these methods are missing from
         // Firefox/Chrome experimental implementations
@@ -1027,7 +1027,7 @@ define("promise/polyfill",
 
     __exports__.polyfill = polyfill;
   });
-define("promise/promise", 
+define("promise/promise",
   ["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __exports__) {
     "use strict";
@@ -1244,7 +1244,7 @@ define("promise/promise",
 
     __exports__.Promise = Promise;
   });
-define("promise/race", 
+define("promise/race",
   ["./utils","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
@@ -1337,7 +1337,7 @@ define("promise/race",
 
     __exports__.race = race;
   });
-define("promise/reject", 
+define("promise/reject",
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -1388,7 +1388,7 @@ define("promise/reject",
 
     __exports__.reject = reject;
   });
-define("promise/resolve", 
+define("promise/resolve",
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -1434,7 +1434,7 @@ define("promise/resolve",
 
     __exports__.resolve = resolve;
   });
-define("promise/utils", 
+define("promise/utils",
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -1950,6 +1950,119 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
     for ( var i = 0; i < channels.length; i++ ) {
         client.send( '{"messageType": "unregister", "channelID": "' + channels[ i ].channelID + '"}');
     }
+};
+
+/**
+    The AeroGear.ajax is used to perform Ajax requests.
+    @status Experimental
+    @param {Object} [settings={}] - the settings to configure the request
+    @param {String} [settings.url] - the url to send the request to
+    @param {String} [settings.type="GET"] - the type of the request
+    @param {String} [settings.dataType="json"] - the data type of the recipient's response
+    @param {String} [settings.accept="application/json"] - the media types which are acceptable for the recipient's response
+    @param {String} [settings.contentType="application/json"] - the media type of the entity-body sent to the recipient
+    @param {Object} [settings.params] - contains query parameters to be added in URL in case of GET request or in request body in case of POST and application/x-www-form-urlencoded content type
+    @param {Object} [settings.data] - the data to be sent to the recipient
+    @returns {Object} An ES6 Promise
+    @example
+
+        var es6promise = AeroGear.ajax({
+            type: "GET",
+            params: {
+                param1: "val1"
+            },
+            url: "http://SERVER:PORT/CONTEXT"
+        });
+*/
+AeroGear.ajax = function( settings ) {
+    return new Promise( function( resolve, reject ) {
+        settings = settings || {};
+
+        var request = new XMLHttpRequest(),
+            that = this,
+            requestType = ( settings.type || "GET" ).toUpperCase(),
+            responseType = ( settings.dataType || "json" ).toLowerCase(),
+            accept = ( settings.accept || "application/json" ).toLowerCase(),
+            // TODO: compare contentType by checking if it starts with some value since it might contains the charset as well
+            contentType = ( settings.contentType || "application/json" ).toLowerCase(),
+            _oncomplete,
+            header,
+            name,
+            urlEncodedData = [],
+            url = settings.url,
+            data = settings.data;
+
+        if ( settings.params ) {
+            // encode params
+            if( requestType === "GET" || ( requestType === "POST" && contentType === "application/x-www-form-urlencoded" ) ) {
+                for( name in settings.params ) {
+                    urlEncodedData.push( encodeURIComponent( name ) + "=" + encodeURIComponent( settings.params[ name ] || "" ) );
+                }
+            // add params in request body
+            } else if ( contentType === "application/json" ) {
+                data = data || {};
+                data.params = data.params || {};
+                AeroGear.extend( data.params,  settings.params );
+            }
+        }
+
+        if ( contentType === "application/x-www-form-urlencoded" ) {
+            if ( data ) {
+                for( name in data ) {
+                    urlEncodedData.push( encodeURIComponent( name ) + '=' + encodeURIComponent( data[ name ] ) );
+                }
+            }
+            data = urlEncodedData.join( "&" );
+        }
+
+        // if is GET request & URL params exist then add them in URL
+        if( requestType === "GET" && urlEncodedData.length > 0 ) {
+            url += "?" + urlEncodedData.join( "&" );
+        }
+
+        request.open( requestType, url, true, settings.username, settings.password );
+
+        request.responseType = responseType;
+        request.setRequestHeader( "Content-Type", contentType );
+        request.setRequestHeader( "Accept", accept );
+
+        if( settings.headers ) {
+            for ( header in settings.headers ) {
+                request.setRequestHeader( header, settings.headers[ header ] );
+            }
+        }
+
+        // Success and 400's
+        request.onload = function() {
+            var status = ( request.status < 400 ) ? "success" : "error";
+
+            if( status === "success" ) {
+                resolve( request );
+            } else {
+                reject( request );
+            }
+
+            that._oncomplete( request, status );
+        };
+
+        // Network errors
+        request.onerror = function() {
+            reject( request );
+            that._oncomplete( request, "error" );
+        };
+
+        this._oncomplete = function( request, status ) {
+            if( settings[ status ] ) {
+                settings[ status ].apply( this, arguments );
+            }
+
+            if( settings.complete ) {
+                settings.complete.call( this, request, "complete" );
+            }
+        };
+
+        request.send( data );
+    });
 };
 
 (function( AeroGear, undefined ) {
