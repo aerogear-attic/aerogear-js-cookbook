@@ -29,8 +29,7 @@
             if ( mailEndpoint.pushEndpoint ) {
                 // assemble the metadata for registration with the UnifiedPush server
                 var metadata = {
-                    deviceToken: mailEndpoint.channelID,
-                    simplePushEndpoint: mailEndpoint.pushEndpoint,
+                    deviceToken: mailEndpoint.pushEndpoint,
                     alias: "john",
                     categories: ["mail"]
                 };
