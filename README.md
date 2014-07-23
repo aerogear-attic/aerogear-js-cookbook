@@ -47,6 +47,10 @@ The UnifiedPush and SimplePush recipes are submodules, so you will need also run
 
     $ git submodule update
 
+To get the most recent versions of the submodules,  you can also run,
+
+    $ git submodule update --remote --merge
+
 ### Contributing Cookbook Recipes
 
 TBD
