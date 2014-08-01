@@ -13,13 +13,8 @@
             // extract the endpoint object from the event:
             mailEndpoint = event.target.result;
 
-            // if it is the first registration, let's print the pushEndpoint URL.
-            // Otherwise we indicate that a registration has already happened
-            if ( mailEndpoint ) {
-                appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint);
-            } else {
-                appendTextArea("Mail was already registered");
-            }
+            // let's print the pushEndpoint URL.
+            appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint);
         };
 
         // set the notification handler:

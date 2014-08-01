@@ -52,7 +52,7 @@ First, clone the [AeroGear SimplePush Server](https://github.com/aerogear/aeroge
 Now perform a ```cd server-netty``` and execute the following command to start the server on your machine:
 
 
-    mvn exec:java -Dexec.args="-host=localhost -port=7777 -tls=false -ack_interval=10000 -useragent_reaper_timeout=60000 -token_key=yourRandomToken" 
+    mvn exec:java -Dexec.args="-host=localhost -port=7777 -tls=false -ack_interval=10000 -useragent_reaper_timeout=60000 -token_key=yourRandomToken"
 
 This starts an _unsecured_ instance of the AeroGear SimplePush Server on localhost using port 7777.
 
@@ -73,7 +73,7 @@ Now that we have a connected client it is time to send a message to the client. 
 
     Mail pushEndpoint URL: {pushEndpoint}
 
-message. In case you see a ```Mail was already registered``` message, that means you're not executing this step the first time. More details in the JavaScript client section below.
+message.
 
 For sending a notification to the client, copy the above ```URL``` and add it the the ```cURL``` command below:
 
@@ -119,30 +119,24 @@ If the request was successful, the ```onsuccess``` function of the request objec
     // the request returns 'successfully':
     mailRequest.onsuccess = function( event ) {
         ...
-        // if it is the first registration, let's print the pushEndpoint URL.
-        // Otherwise we indicate that a registration has already happened 
-        if ( mailEndpoint.pushEndpoint ) {
-            appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint.pushEndpoint);
-        } else {
-            appendTextArea("Mail was already registered");
-        }
+        appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint);
         ...
     }
 
-If the client registers the first time for the SimplePush channel, a ```pushEndpoint``` is passed along. This ```URL``` is used for sending notifications to _this_ client, as shown above. If a client performs a reregistration for the channel, there is _no_ ```pushEndpoint``` passed along. Besides that, the client always logs the ```channelID``` of the returned endpoint. **_Note:_** The registered channels are stored in your browser's ```localStorage```.
+When the client registers for the SimplePush channel, a ```pushEndpoint``` is passed along. This ```URL``` is used for sending notifications to _this_ client, as shown above. **_Note:_** The registered channels are stored in your browser's ```localStorage```.
 
 Next we need to setup a message handler:
 
     // set the notification handler:
     navigator.setMessageHandler( "push", function( message ) {
         // we got message for our 'mail' endpoint ?
-        if ( message.channelID === mailEndpoint.channelID ) {
+        if ( message.pushEndpoint === mailEndpoint ) {
             // let's react on that mail....
             appendTextArea("Mail Notification - " + message.version);
         }
     });
 
-The notification handler receives any ```push``` message/event. Inside of the attached function, we perform some application specific JavaScript code. First we check if the ```channelID``` of the received message matches the ```channelID``` of our notification endpoint. If that is the case, we log the current ```version``` of the new data.
+The notification handler receives any ```push``` message/event. Inside of the attached function, we perform some application specific JavaScript code. First we check if the ```pushEndpoint``` of the received message matches the ```pushEndpoint``` of our notification endpoint. If that is the case, we log the current ```version``` of the new data.
 
 **Note:** As said above, in SimplePush no payload is being sent to the client. In this quickstart nothing special is done. In a real web application it would be reasonable to perform a ```HTTP GET``` based on a received _version update_, to display the latest data.
 
