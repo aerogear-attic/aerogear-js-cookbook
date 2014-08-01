@@ -1,5 +1,5 @@
 (function() {
-    var mailEndpoint, mailRequest, SPClient;
+    var mailEndpoint, mailRequest, SPClient, regs;
 
     // onConnect callback function:
     function spConnect() {
@@ -10,25 +10,22 @@
 
         // the DOMRequest returns 'successfully':
         mailRequest.onsuccess = function( event ) {
-            // extract the endpoint object from the event: 
+            // extract the endpoint object from the event:
             mailEndpoint = event.target.result;
 
             // if it is the first registration, let's print the pushEndpoint URL.
-            // Otherwise we indicate that a registration has already happened 
-            if ( mailEndpoint.pushEndpoint ) {
-                appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint.pushEndpoint);
+            // Otherwise we indicate that a registration has already happened
+            if ( mailEndpoint ) {
+                appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint);
             } else {
                 appendTextArea("Mail was already registered");
             }
-
-            // store the channelID...
-            appendTextArea("Subscribed to Mail messages on " + mailEndpoint.channelID);
         };
 
         // set the notification handler:
         navigator.setMessageHandler( "push", function( message ) {
-            // we got message for our 'mail' endpoint ? 
-            if ( message.channelID === mailEndpoint.channelID ) {
+            // we got message for our 'mail' endpoint ?
+            if ( message.pushEndpoint === mailEndpoint ) {
                 // let's react on that mail....
                 appendTextArea("Mail Notification - " + message.version);
             }
@@ -49,7 +46,7 @@
         // AeroGear add-on to allow a reconnect, if the WebSocket/SockJS connection is lost
             navigator.push.reconnect();
         });
-        
+
     // onClose callback function:
     function spClose() {
         $("#reconnect").show();
