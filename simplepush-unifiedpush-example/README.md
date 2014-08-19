@@ -34,13 +34,13 @@ This starts an _unsecured_ instance of the AeroGear SimplePush Server on localho
 
 ### Building the AeroGear UnifiedPush Server
 
-Download the server from the [AeroGear UnifiedPush Server](https://github.com/aerogear/aerogear-unifiedpush-server) project’s github page. Build and deploy UnifiedPush Server according to the instructions shown 
-in [README.md](https://github.com/aerogear/aerogear-unifiedpush-server/blob/master/README.md).
+Download the [AeroGear UnifiedPush Server](http://aerogear.org/push/) and deploy according to the instructions shown 
+in [this guide](http://aerogear.org/docs/unifiedpush/ups_userguide/server-installation/).
 
 ### Registration of the SimplePush Variant
 
 Once the UnifiedPush server is running, access the administration console via ```http://SERVER:PORT/ag-push``` to register your SimplePush variant.
-Temporarily there is an "admin:123" user created by default, so you can use those credentials to login. On _first_ login,  you will be requested to change the password.
+Temporarily there is an "admin:123" user created by default, so you can use those credentials to login. On _first_ login,  you will be requested to change the password. More details can be found in the [Admin UI Guide](http://aerogear.org/docs/unifiedpush/ups_userguide/admin-ui/).
 
 
 ### JavaScript client
