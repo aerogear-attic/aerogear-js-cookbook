@@ -32,7 +32,7 @@ This starts an _unsecured_ instance of the AeroGear SimplePush Server on localho
 
 **_NOTE_:** The server uses an in-memory database for this demo. None of the SimplePush channels are persisted by the server. A restart of the server means that the previous registered channels are gone.
 
-### Building the AeroGear UnifiedPush Server
+### Running the AeroGear UnifiedPush Server
 
 Download the [AeroGear UnifiedPush Server](http://aerogear.org/push/) and deploy according to the instructions shown 
 in [this guide](http://aerogear.org/docs/unifiedpush/ups_userguide/server-installation/).
