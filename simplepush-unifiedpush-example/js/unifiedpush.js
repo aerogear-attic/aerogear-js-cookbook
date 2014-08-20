@@ -22,7 +22,7 @@
             // extract the endpoint object from the event:
             mailEndpoint = event.target.result;
 
-            appendTextArea("Subscribed to 'Mail' messages on channel " + mailEndpoint.channelID);
+            appendTextArea("Subscribed to 'Mail' messages on SimplePush Server");
 
             // if it is the first registration, need to register
             // the 'pushEndpoint' with the UnifiedPush server.
