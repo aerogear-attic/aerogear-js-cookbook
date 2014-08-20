@@ -65,8 +65,9 @@ Now, issue the following CURL command to send a push notification against the Un
          -v -H "Accept: application/json" -H "Content-type: application/json" 
          -X POST
        -d '{
+           "message": {},
            "simple-push": "version=123"
-        }' http://localhost:8080/ag-push/rest/sender
+        }' https://SERVER:PORT/ag-push/rest/sender
 
 Notice the message being received by the web application!
 
