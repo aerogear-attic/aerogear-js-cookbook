@@ -4,7 +4,7 @@
   "dependencies": {
     "topcoat": "~0.8.0",
     "modernizr": "~2.6.2",
-    "aerogear": "~1.5.1"
+    "aerogear": "~1.5.2"
   },
   "devDependencies": {}
 }
