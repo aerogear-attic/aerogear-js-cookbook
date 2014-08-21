@@ -26,7 +26,7 @@ Download the server from the [AeroGear SimplePush Server](https://github.com/aer
 
 Now perform a ```cd server-netty``` and execute the following command to start the server on your machine:
 
-    mvn exec:java -Dexec.args="-host=localhost -port=7777 -tls=false -ack_interval=10000 -useragent_reaper_timeout=60000 -token_key=yourRandomToken" 
+    mvn exec:java -Dexec.args="-host=localhost -port=7777 -tls=false -ack_interval=10000 -useragent_reaper_timeout=60000 -token_key=yourRandomToken"
 
 This starts an _unsecured_ instance of the AeroGear SimplePush Server on localhost using port 7777.
 
@@ -34,7 +34,7 @@ This starts an _unsecured_ instance of the AeroGear SimplePush Server on localho
 
 ### Running the AeroGear UnifiedPush Server
 
-Download the [AeroGear UnifiedPush Server](http://aerogear.org/push/) and deploy according to the instructions shown 
+Download the [AeroGear UnifiedPush Server](http://aerogear.org/push/) and deploy according to the instructions shown
 in [this guide](http://aerogear.org/docs/unifiedpush/ups_userguide/server-installation/).
 
 ### Registration of the SimplePush Variant
@@ -48,7 +48,7 @@ Temporarily there is an "admin:123" user created by default, so you can use thos
 Prior to run the application we need to configure the variantId and variantSecret as well as the URL's of the running servers. Navigate to _js/_ folder and open in your favorite text editor, the _unifiedpush.js_ file. The file contains the main logic of the application and is responsible to register the channels with the SimplePush server, retrieve the endpoints for the update, and then register those endpoints with the UnifiedPush server so that notifications can be received.
 
 On top of the file you will notice the configuration params that you need to change according to your specific configuration:
-    
+
     // config params for UnifiedPush server
     var variantId = "<Your-Variant-ID";
     var variantSecret = "<Your-Variant-Secret>";
@@ -62,7 +62,7 @@ Once that is done, open the ```index.html``` file in your favourite browser. You
 Now, issue the following CURL command to send a push notification against the UnifiedPush server. Don't forget to replace the ```PushApplicationID``` and ```MasterSecret``` you received when you registered you Application in the administration console:
 
     curl -3 -u "{PushApplicationID}:{MasterSecret}"
-         -v -H "Accept: application/json" -H "Content-type: application/json" 
+         -v -H "Accept: application/json" -H "Content-type: application/json"
          -X POST
        -d '{
            "simple-push": "version=123"
