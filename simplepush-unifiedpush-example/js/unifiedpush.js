@@ -26,10 +26,10 @@
 
             // if it is the first registration, need to register
             // the 'pushEndpoint' with the UnifiedPush server.
-            if ( mailEndpoint.pushEndpoint ) {
+            if ( mailEndpoint ) {
                 // assemble the metadata for registration with the UnifiedPush server
                 var metadata = {
-                    deviceToken: mailEndpoint.pushEndpoint,
+                    deviceToken: mailEndpoint,
                     alias: "john",
                     categories: ["mail"]
                 };
@@ -46,14 +46,16 @@
                 settings.metadata = metadata;
 
                 // register with the server
-                UPClient.registerWithPushServer(settings);
+                UPClient.registerWithPushServer(settings).then(function() {
+                    UPClient.unregisterWithPushServer(metadata.deviceToken);
+                });
             } else {
                 appendTextArea("'Mail' was already registered!");
             }
         };
         // set the notification handler:
         navigator.setMessageHandler( "push", function( message ) {
-            if ( message.channelID === mailEndpoint.channelID ) {
+            if ( message.pushEndpoint === mailEndpoint ) {
                 // let's react on the 'mail' endpoint
                 appendTextArea("Mail Notification - " + message.version);
             }

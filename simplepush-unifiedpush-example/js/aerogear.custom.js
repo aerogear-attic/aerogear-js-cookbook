@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v1.5.1 - 2014-07-21
+/*! AeroGear JavaScript Library - v1.5.2 - 2014-08-19
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -548,7 +548,7 @@ var define, requireModule, require, requirejs;
   };
 })();
 
-define("promise/all",
+define("promise/all", 
   ["./utils","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
@@ -645,7 +645,7 @@ define("promise/all",
 
     __exports__.all = all;
   });
-define("promise/asap",
+define("promise/asap", 
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -710,7 +710,7 @@ define("promise/asap",
 
     __exports__.asap = asap;
   });
-define("promise/cast",
+define("promise/cast", 
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -781,7 +781,7 @@ define("promise/cast",
 
     __exports__.cast = cast;
   });
-define("promise/config",
+define("promise/config", 
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -800,7 +800,7 @@ define("promise/config",
     __exports__.config = config;
     __exports__.configure = configure;
   });
-define("promise/polyfill",
+define("promise/polyfill", 
   ["./promise","./utils","exports"],
   function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
@@ -808,7 +808,7 @@ define("promise/polyfill",
     var isFunction = __dependency2__.isFunction;
 
     function polyfill() {
-      var es6PromiseSupport =
+      var es6PromiseSupport = 
         "Promise" in window &&
         // Some of these methods are missing from
         // Firefox/Chrome experimental implementations
@@ -832,7 +832,7 @@ define("promise/polyfill",
 
     __exports__.polyfill = polyfill;
   });
-define("promise/promise",
+define("promise/promise", 
   ["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __exports__) {
     "use strict";
@@ -1049,7 +1049,7 @@ define("promise/promise",
 
     __exports__.Promise = Promise;
   });
-define("promise/race",
+define("promise/race", 
   ["./utils","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
@@ -1142,7 +1142,7 @@ define("promise/race",
 
     __exports__.race = race;
   });
-define("promise/reject",
+define("promise/reject", 
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -1193,7 +1193,7 @@ define("promise/reject",
 
     __exports__.reject = reject;
   });
-define("promise/resolve",
+define("promise/resolve", 
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -1239,7 +1239,7 @@ define("promise/resolve",
 
     __exports__.resolve = resolve;
   });
-define("promise/utils",
+define("promise/utils", 
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -1476,12 +1476,13 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
         @augments AeroGear.Notifier.adapters.SimplePush
      */
     this.processMessage = function( message ) {
-        var channel, updates;
+        var channel, updates, storage;
         if ( message.messageType === "register" && message.status === 200 ) {
             channel = {
                 channelID: message.channelID,
                 version: message.version,
-                state: "used"
+                state: "used",
+                pushEndpoint: message.pushEndpoint
             };
             pushStore.channels = this.updateChannel( pushStore.channels, channel );
             this.setPushStore( pushStore );
@@ -1492,7 +1493,7 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
             // Trigger registration success callback
             jQuery( navigator.push ).trigger( jQuery.Event( message.channelID + "-success", {
                 target: {
-                    result: channel
+                    result: channel.pushEndpoint
                 }
             }));
         } else if ( message.messageType === "register" ) {
@@ -1504,10 +1505,16 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
             throw "SimplePushUnregistrationError";
         } else if ( message.messageType === "notification" ) {
             updates = message.updates;
+            storage = JSON.parse( localStorage.getItem( "ag-push-store" ) );
 
             // Notifications could come in a batch so process all
             for ( var i = 0, updateLength = updates.length; i < updateLength; i++ ) {
+                // Find the pushEndpoint for this updates channelID
+                var chnl = storage.channels.filter( function( chanl ) {
+                    return chanl.channelID === updates[ i ].channelID;
+                });
 
+                updates[ i ].pushEndpoint = chnl ? chnl[ 0 ].pushEndpoint : "";
                 // Trigger the push event which apps will create their listeners to respond to when receiving messages
                 jQuery( navigator.push ).trigger( jQuery.Event( "push", {
                     message: updates[ i ]
@@ -1569,6 +1576,7 @@ AeroGear.Notifier.adapters.SimplePush = function( clientName, settings ) {
             if ( channels[ i ].channelID === channel.channelID ) {
                 channels[ i ].version = channel.version;
                 channels[ i ].state = channel.state;
+                channels[ i ].pushEndpoint = channel.pushEndpoint;
                 break;
             }
         }
@@ -1692,7 +1700,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.disconnect = function( onDisconn
 
 /**
     Subscribe this client to a new channel
-    @param {Object|Array} channels - a channel object or array of channel objects to which this client can subscribe. At a minimum, each channel should contain a requestObject which will eventually contain the subscription success callback and a callback, which is fired when notifications are received. Reused channels may also contain channelID and other metadata.
+    @param {Object|Array} channels - a channel object or array of channel objects to which this client can subscribe. At a minimum, each channel should contain a requestObject which will eventually contain the subscription success callback. Reused channels may also contain channelID and other metadata.
     @param {Boolean} [reset] - if true, remove all channels from the set and replace with the supplied channel(s)
     @example
     var SPNotifier = AeroGear.Notifier({
@@ -1732,13 +1740,14 @@ AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, 
                 this.bindSubscribeSuccess( pushStore.channels[ index ].channelID, channels[ i ].requestObject );
                 channels[ i ].channelID = pushStore.channels[ index ].channelID;
                 channels[ i ].state = "used";
+                channels[ i ].pushEndpoint = pushStore.channels[ index ].pushEndpoint;
 
                 // Trigger the registration event since there will be no register message
                 setTimeout((function(channel) {
                     return function() {
                         jQuery( navigator.push ).trigger( jQuery.Event( channel.channelID + "-success", {
                             target: {
-                                result: channel
+                                result: channel.pushEndpoint
                             }
                         }));
                     };
@@ -1780,11 +1789,14 @@ AeroGear.Notifier.adapters.SimplePush.prototype.subscribe = function( channels, 
     SPNotifier.unsubscribe( channelObject );
  */
 AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels ) {
-    var client = this.getClient();
+    var chan,
+        client = this.getClient(),
+        storage = JSON.parse( localStorage.getItem( "ag-push-store" ) );
 
     channels = Array.isArray( channels ) ? channels : [ channels ];
     for ( var i = 0; i < channels.length; i++ ) {
-        client.send( '{"messageType": "unregister", "channelID": "' + channels[ i ].channelID + '"}');
+        chan = storage.channels.filter( function( item ){ return item.pushEndpoint === channels[ i ]; });
+        client.send( '{"messageType": "unregister", "channelID": "' + chan[ 0 ].channelID + '"}');
     }
 };
 
@@ -1818,6 +1830,9 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
         // Check for native push support
         if ( !!navigator.push && this.options.useNative ) {
             // Browser supports push so let it handle it
+            if ( options.onConnect ) {
+                options.onConnect();
+            }
             return;
         }
 
@@ -1867,13 +1882,7 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
                                 }
 
                                 spClient.simpleNotifier.subscribe({
-                                    requestObject: request,
-                                    callback: function( message ) {
-                                        $( navigator.push ).trigger({
-                                            type: "push",
-                                            message: message
-                                        });
-                                    }
+                                    requestObject: request
                                 });
 
                                 return request;
@@ -1912,9 +1921,9 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
                     })();
 
                     /**
-                        Add the setMessageHandler function to the global navigator object
+                        Add the setMessageHandler/mozSetMessageHandler function to the global navigator object
                         @status Experimental
-                        @constructs navigator.setMessageHandler
+                        @constructs navigator.setMessageHandler/navigator.mozSetMessageHandler
                         @param {String} messageType - a name or category to give the messages being received and in this implementation, likely 'push'
                         @param {Function} callback - the function to be called when a message of this type is received
                         @example
@@ -1923,8 +1932,16 @@ AeroGear.Notifier.adapters.SimplePush.prototype.unsubscribe = function( channels
                                 console.log("Mail Message Received");
                             }
                         });
+
+                        or
+                        // Mozilla's spec currently has the 'moz' prefix
+                        navigator.mozSetMessageHandler( "push", function( message ) {
+                            if ( message.channelID === mailEndpoint.channelID ) {
+                                console.log("Mail Message Received");
+                            }
+                        });
                      */
-                    navigator.setMessageHandler = function( messageType, callback ) {
+                    navigator.setMessageHandler = navigator.mozSetMessageHandler = function( messageType, callback ) {
                         $( navigator.push ).on( messageType, function( event ) {
                             var message = event.message;
                             callback.call( this, message );
@@ -2064,15 +2081,8 @@ AeroGear.ajax = function( settings ) {
         // create callback arguments
         this._createCallbackArgs = function( request, status ) {
             var statusText = request.statusText || status,
-                dataOrError = request.responseText;
+                dataOrError = ( responseType === 'text' || responseType === '') ? request.responseText : request.response;
 
-            if ( responseType === 'json' ) {
-                try {
-                    dataOrError = JSON.parse( dataOrError );
-                } catch ( error ) {
-                    dataOrError = request.responseText;
-                }
-            }
             return [ dataOrError, statusText, request ];
         };
 
@@ -2146,6 +2156,7 @@ AeroGear.ajax = function( settings ) {
             return new AeroGear.UnifiedPushClient( variantID, variantSecret, pushServerURL );
         }
 
+        pushServerURL = pushServerURL.substr(-1) === '/' ? pushServerURL : pushServerURL + '/';
         /**
             Performs a register request against the UnifiedPush Server using the given metadata which represents a client that wants to register with the server.
             @param {Object} settings The settings to pass in
@@ -2177,7 +2188,7 @@ AeroGear.ajax = function( settings ) {
                 contentType: "application/json",
                 dataType: "json",
                 type: "POST",
-                url: pushServerURL + "/rest/registry/device",
+                url: pushServerURL + "rest/registry/device",
                 headers: {
                     "Authorization": "Basic " + window.btoa(variantID + ":" + variantSecret)
                 },
@@ -2203,7 +2214,7 @@ AeroGear.ajax = function( settings ) {
                 contentType: "application/json",
                 dataType: "json",
                 type: "DELETE",
-                url: pushServerURL + "/rest/registry/device/" + encodeURIComponent(encodeURIComponent(deviceToken)),
+                url: pushServerURL + "rest/registry/device/" + deviceToken,
                 headers: {
                     "Authorization": "Basic " + window.btoa(variantID + ":" + variantSecret)
                 },
