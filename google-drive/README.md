@@ -17,7 +17,7 @@ Let's take a look at how to setup the "authorizer"
     var authz = AeroGear.Authz();
 
     // Then add a "service" to it
-    authz.add{
+    authz.add({
         name: "drive",
         settings: {
             clientId: "CLIENT_ID",
@@ -26,7 +26,7 @@ Let's take a look at how to setup the "authorizer"
             validationEndpoint: "https://www.googleapis.com/oauth2/v1/tokeninfo",
             scopes: "https://www.googleapis.com/auth/drive"
         }
-    };
+    });
 
     // And set our new "service" to a variable for easier access
     var gDrive = authz.services.drive;
