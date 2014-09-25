@@ -41,16 +41,6 @@ To get the recipes, clone this repo:
 
     $ cd aerogear-js-cookbook
 
-The UnifiedPush and SimplePush recipes are submodules, so you will need also run these commands:
-
-    $ git submodule init
-
-    $ git submodule update
-
-To get the most recent versions of the submodules,  you can also run,
-
-    $ git submodule update --remote --merge
-
 ### Contributing Cookbook Recipes
 
 TBD

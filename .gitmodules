@@ -1,6 +1,0 @@
-[submodule "aerogear-simplepush-unifiedpush-quickstart"]
-	path = aerogear-simplepush-unifiedpush-quickstart
-	url = git@github.com:aerogear/aerogear-simplepush-unifiedpush-quickstart.git
-[submodule "aerogear-simplepush-quickstart"]
-	path = aerogear-simplepush-quickstart
-	url = git@github.com:aerogear/aerogear-simplepush-quickstart.git
