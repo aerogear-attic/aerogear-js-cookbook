@@ -1,0 +1,20 @@
+textarea {
+    width: 425px;
+    height: 300px;
+}
+
+body > div {
+    width: 45%;
+}
+
+.leftDiv {
+    float: left;
+}
+
+.rightDiv {
+    float: right;
+}
+
+#reconnect {
+    display: none;
+}
