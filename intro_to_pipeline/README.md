@@ -1,6 +1,8 @@
 Intro To Pipeline
 ===============================
 
+##NOTICE - THE PIPELINE API HAS BEEN DEPRECATED AND REMOVED IN 2.0
+
 **Problem**
 
 We want to interact with REST endpoints on our server

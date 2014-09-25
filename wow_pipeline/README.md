@@ -1,6 +1,8 @@
 World of Warcraft Realm Checker
 ===============================
 
+##NOTICE - THE PIPELINE API HAS BEEN DEPRECATED AND REMOVED IN 2.0
+
 **Problem**
 
 You want to connect to a REST service that is being provided on a different domain.
