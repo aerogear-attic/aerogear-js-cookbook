@@ -34,21 +34,18 @@
                     categories: ["mail"]
                 };
 
-                var settings = {
-                    success: function() {
-                        appendTextArea("Registered 'Mail' endpoint with UnifiedPush server!");
-                    },
-                    error: function() {
-                        appendTextArea("Error when registering with UnifiedPush server!");
-                    }
-                };
+                var settings = {};
 
                 settings.metadata = metadata;
 
                 // register with the server
-                UPClient.registerWithPushServer(settings).then(function() {
-                    UPClient.unregisterWithPushServer(metadata.deviceToken);
-                });
+                UPClient.registerWithPushServer(settings)
+                    .then(function() {
+                        appendTextArea("Registered 'Mail' endpoint with UnifiedPush server!");
+                    })
+                    .then(null, function() {
+                        appendTextArea("Error when registering with UnifiedPush server!");
+                    });
             } else {
                 appendTextArea("'Mail' was already registered!");
             }
