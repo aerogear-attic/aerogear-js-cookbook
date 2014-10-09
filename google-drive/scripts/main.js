@@ -3,7 +3,7 @@ window.localStorage.removeItem('ag-oauth2-1038594593085.apps.googleusercontent.c
 
 $(function() {
 
-    var pipeline, filesPipe, authWindow, timer, authURL, callback,
+    var authWindow, timer, authURL, callback,
     // Create a new AeroGear.Authorizer
     authz = AeroGear.Authorization();
 
@@ -20,23 +20,10 @@ $(function() {
         }
     });
 
-    // Creating a new Pipeline with the "drive" authorizer
-    pipeline = AeroGear.Pipeline( { authorizer: authz.services.drive } );
-    pipeline.add([
-        {
-            name: "files",
-            settings: {
-                baseURL: "https://www.googleapis.com/drive/v2/"
-            }
-        }
-    ]);
-
-    filesPipe = pipeline.pipes.files;
-
     // Setup event Handlers
 
     $( "#list_files" ).on( "click", function() {
-        readFilesPipe();
+        readFiles();
     });
 
     $( "#dance" ).on( "click", function( events ) {
@@ -50,18 +37,17 @@ $(function() {
     // Google recommends that we also send another request to a "validate" endpoint,  but that is not in the spec.
     function validateResponse( responseFromAuthEndpoint, callback ) {
 
-        authz.services.drive.validate( responseFromAuthEndpoint,{
-            success: function( response ) {
+        authz.services.drive.validate( responseFromAuthEndpoint )
+            .then( function ( response ) {
                 $( ".topcoat-notification.errors" ).hide();
                 console.log( response );
                 $( "#dance" ).attr( "disabled", "disabled" );
                 // here we are calling the read from earlier
                 callback();
-            },
-            error: function( error ) {
-                console.log( error );
-            }
-        });
+            })
+            .then( null, function ( err ) {
+                console.log( err );
+            });
     }
 
     // This will do the OAuth2 Dance, which is to open a separate window that asks for you permission.
@@ -90,15 +76,15 @@ $(function() {
         authWindow.focus();
     }
 
-    function readFilesPipe() {
+    function readFiles() {
         $("ul.topcoat-list__container").empty();
         $( ".topcoat-notification.loading" ).show();
         // Just a normal pipe.read,  using promises
-        filesPipe
-            .read()
+        authz.services.drive
+            .execute({ url: "https://www.googleapis.com/drive/v2/files", type: "GET" })
             .then( function( response ){
                 var putItHere = $("ul.topcoat-list__container"),
-                    items = response.items,
+                    items = response.data.items,
                     itemLength = items.length,
                     item,
                     i;
@@ -114,10 +100,9 @@ $(function() {
                 // If the Authz fails, then we will get a url constructed for us, that we need to do something with to Authenticate
                 // It also needs to be user initiated since most browsers will block the window that needs to be opened
                 authURL = error.authURL;
-                callback = readFilesPipe;
+                callback = readFiles;
                 $( ".topcoat-notification.errors" ).show();
-            })
-            .always( function() {
+            }).then(function () {
                 $( ".topcoat-notification.loading" ).hide();
             });
     }
