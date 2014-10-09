@@ -2,7 +2,7 @@
   "name": "vertx-notifier",
   "version": "0.0.0",
   "dependencies": {
-    "aerogear": "1.5.2",
+    "aerogear": "~2.0.0",
     "vertx": "eclipse/vert.x#v2.0.2-final",
     "sockjs.js": "http://cdn.sockjs.org/sockjs-0.3.4.js",
     "angular": "1.2.16",
