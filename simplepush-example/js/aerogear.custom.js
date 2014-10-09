@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v1.5.2 - 2014-08-19
+/*! AeroGear JavaScript Library - v2.0.0-beta1 - 2014-10-09
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -60,7 +60,7 @@ AeroGear.Core = function() {
                 } else {
                     if( current.name ) {
 
-                        // Merge the Module( pipeline, datamanger, ... )config with the adapters settings
+                        // Merge the Module( authz, datamanger, ... )config with the adapters settings
                         current.settings = AeroGear.extend( current.settings || {}, this.config );
 
                         collection[ current.name ] = AeroGear[ this.lib ].adapters[ current.type || this.type ]( current.name, current.settings );
@@ -72,7 +72,7 @@ AeroGear.Core = function() {
                 return this;
             }
 
-            // Merge the Module( pipeline, datamanger, ... )config with the adapters settings
+            // Merge the Module( authz, datamanger, ... )config with the adapters settings
             // config is an object so use that signature
             config.settings = AeroGear.extend( config.settings || {}, this.config );
 
@@ -85,7 +85,7 @@ AeroGear.Core = function() {
         return this;
     };
     /**
-        This function is used internally by pipeline, datamanager, etc. to remove an Object (pipe, store, etc.) from the respective collection.
+        This function is used internally by datamanager, etc. to remove an Object (store, etc.) from the respective collection.
         @name AeroGear.remove
         @method
         @param {String|String[]|Object[]|Object} config - This can be a variety of types specifying how to remove the object. See the particular constructor for the object calling .remove for more info.
@@ -120,17 +120,6 @@ AeroGear.Core = function() {
 
         return this;
     };
-};
-
-/**
-    Utility function to test if an object is an Array
-    @private
-    @method
-    @deprecated
-    @param {Object} obj - This can be any object to test
-*/
-AeroGear.isArray = function( obj ) {
-    return Array.isArray( obj );
 };
 
 /**
