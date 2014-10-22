@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v2.0.0-beta1 - 2014-10-09
+/*! AeroGear JavaScript Library - v2.0.0 - 2014-10-22
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -138,43 +138,6 @@ AeroGear.extend = function() {
     }
     return target;
 };
-
-/**
-    This callback is executed when an HTTP request completes whether it was successful or not.
-    @callback AeroGear~completeCallbackREST
-    @param {Object} jqXHR - The jQuery specific XHR object
-    @param {String} textStatus - The text status message returned from the server
- */
-/**
-    This callback is executed when an HTTP error is encountered during a request.
-    @callback AeroGear~errorCallbackREST
-    @param {Object} jqXHR - The jQuery specific XHR object
-    @param {String} textStatus - The text status message returned from the server
-    @param {Object} errorThrown - The HTTP error thrown which caused the is callback to be called
- */
-/**
-    This callback is executed when an HTTP success message is returned during a request.
-    @callback AeroGear~successCallbackREST
-    @param {Object} data - The data, if any, returned in the response
-    @param {String} textStatus - The text status message returned from the server
-    @param {Object} jqXHR - The jQuery specific XHR object
- */
- /**
-    This callback is executed when an HTTP progress message is returned during a request.
-    @callback AeroGear~progressCallbackREST
-    @param {Object} XMLHttpRequestProgressEvent - The progress event
- */
-/**
-    This callback is executed when an error is encountered saving to local or session storage.
-    @callback AeroGear~errorCallbackStorage
-    @param {Object} errorThrown - The HTTP error thrown which caused the is callback to be called
-    @param {Object|Array} data - An object or array of objects representing the data for the failed save attempt.
- */
-/**
-    This callback is executed when data is successfully saved to session or local storage.
-    @callback AeroGear~successCallbackStorage
-    @param {Object} data - The updated data object after the new saved data has been added
- */
 
 //     node-uuid/uuid.js
 //
@@ -410,20 +373,15 @@ AeroGear.extend = function() {
   uuid.nodeRNG = nodeRNG;
   uuid.whatwgRNG = whatwgRNG;
 
-  if (typeof(module) != 'undefined') {
-    // Play nice with node.js
-    module.exports = uuid;
-  } else {
-    // Play nice with browsers
-    var _previousRoot = _global.uuid;
+  // Play nice with browsers
+  var _previousRoot = _global.uuid;
 
-    // **`noConflict()` - (browser only) to reset global 'uuid' var**
-    uuid.noConflict = function() {
-      _global.uuid = _previousRoot;
-      return uuid;
-    }
-    _global.uuid = uuid;
+  // **`noConflict()` - (browser only) to reset global 'uuid' var**
+  uuid.noConflict = function() {
+    _global.uuid = _previousRoot;
+    return uuid;
   }
+  _global.uuid = uuid;
 }());
 
 ;(function () {
