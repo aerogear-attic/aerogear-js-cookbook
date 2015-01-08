@@ -1,0 +1,6 @@
+{{#if isEditing}}
+    {{edit-text class='edit' value=value focus-out='acceptChanges' insert-newline='acceptChanges'}}
+{{else}}
+    <label>{{value}}</label>
+{{/if}}
+

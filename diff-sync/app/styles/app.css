@@ -1,0 +1,91 @@
+.hidden {
+    display: none;
+}
+
+.floatRight {
+    float: right;
+}
+
+.content {
+    padding: 1rem;
+}
+
+.ingredients {
+    font-size: .9rem;
+}
+
+.icon.back, .icon.plus {
+    color: #007AFF;
+}
+
+.topcoat-textarea {
+    font-size: 1rem;
+    padding: .5rem;
+    line-height: 1rem;
+}
+
+div.reset {
+    padding-top: .5265rem;
+}
+
+div.disconnect {
+    padding-top: .5265rem;
+}
+
+/*.icon.next {
+    color: #C7C7CC;
+}*/
+.result {
+    color: red;
+}
+
+.json-error {
+    background: #ffdfdf;
+    -webkit-transition: all 1s;
+}
+
+.jsonerrormessage {
+    font-weight: bold;
+    color: red;
+    font-size: smaller;
+}
+
+h2 {
+    display: inline-block;
+    margin: 5px 0;
+}
+
+table {
+    padding: 20px;
+}
+
+td, th {
+    vertical-align: top;
+    text-align: left;
+}
+
+#jsondiff {
+    overflow: scroll;
+    max-width: 800px;
+}
+
+.jsondiff {
+    width: 800px;
+}
+
+.results {
+    margin-top: 20px;
+}
+
+.results table {
+    width: 100%;
+}
+
+.results  {
+    width: 100%;
+}
+.results > div {
+    vertical-align: top;
+    display: inline-block;
+}
+
