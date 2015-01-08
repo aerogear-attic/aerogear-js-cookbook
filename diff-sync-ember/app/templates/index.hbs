@@ -1,0 +1,28 @@
+<div class="content">
+    <div class="detail">
+        <div class="full left">
+         <ul class="topcoat-list__container">
+             <li class='topcoat-list__item' id="name">
+                <div class="view">
+                    <label>Name: {{input-text value=model.content.name action='modelUpdate'}}</label>
+                </div>
+             </li>
+            <li class='topcoat-list__item'>
+                <div class="view">
+                    <label>Profession: {{input-text value=model.content.profession action='modelUpdate'}}</label>
+                </div>
+            </li>
+            </ul>
+        </div>
+    </div>
+    <h3>Hobbies</h3>
+    <ul class="topcoat-list__container" id="hobby-list">
+        {{#each hobby in model.content.hobbies}}
+            <li class='topcoat-list__item'>
+                <div class="view">
+                    <label>{{input-text value=hobby.description action='modelUpdate'}}</label>
+                </div>
+            </li>
+        {{/each}}
+    </ul>
+</div>
