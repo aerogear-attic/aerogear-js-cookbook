@@ -1,6 +1,8 @@
 Google Drive
 ===============================
 
+##NOTICE - THE AUTHORIZATION API HAS BEEN DEPRECATED IN 2.1 AND WILL BE REMOVED IN A FUTURE VERSION
+
 **Problem**
 
 We want to interact with a secured service, like Google Drive, that uses OAuth2 Authorization
