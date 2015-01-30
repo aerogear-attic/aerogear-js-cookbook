@@ -10,6 +10,8 @@ app.import('vendor/aerogear.custom.js');
 app.import('bower_components/hammerjs/hammer.js');
 app.import('bower_components/ember-hammer/ember-hammer.js');
 
+app.import('bower_components/fast-json-patch/dist/json-patch-duplex.min.js');
+
 // Use `app.import` to add additional libraries to the generated
 // output files.
 //

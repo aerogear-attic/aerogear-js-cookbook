@@ -2326,7 +2326,8 @@ this['DIFF_EQUAL'] = DIFF_EQUAL;
             backups: [],
             edits: []
         },
-        dmp = new diff_match_patch();
+        dmp = jsonpatch;
+        //dmp = new diff_match_patch();
 
         /**
          * Adds a new document to this sync engine.
@@ -2351,16 +2352,8 @@ this['DIFF_EQUAL'] = DIFF_EQUAL;
          * @returns {object} containing the diffs that between the clientDoc and it's shadow doc.
          */
         this.diff = function( doc ) {
-            var diffDoc, patchMsg, docContent, shadowContent, pendingEdits,
+            var patchMsg, pendingEdits,
                 shadow = this._readData( doc.id, "shadows" )[ 0 ];
-
-            if ( typeof doc.content === "string" ) {
-                docContent = doc.content;
-                shadowContent = shadow.content;
-            } else {
-                docContent = JSON.stringify( doc.content );
-                shadowContent = JSON.stringify( shadow.content );
-            }
 
             patchMsg = {
                 msgType: "patch",
@@ -2371,7 +2364,7 @@ this['DIFF_EQUAL'] = DIFF_EQUAL;
                     serverVersion: shadow.serverVersion,
                     // currently not implemented but we probably need this for checking the client and server shadow are identical be for patching.
                     checksum: '',
-                    diffs: this._asAeroGearDiffs( dmp.diff_main( shadowContent, docContent ) )
+                    diffs: [dmp.compare( shadow.content, doc.content )]
                 }]
             };
 
@@ -2417,39 +2410,6 @@ this['DIFF_EQUAL'] = DIFF_EQUAL;
             // then save backup shadow
             this._saveShadowBackup( patchedShadow, patchedShadow.clientVersion );
 
-        };
-
-        this._asAeroGearDiffs = function( diffs ) {
-            return diffs.map(function( value ) {
-                return {
-                    operation: this._asAgOperation( value[ 0 ] ),
-                    text: value[ 1 ]
-                };
-            }.bind( this ) );
-        };
-
-        this._asDiffMatchPathDiffs = function( diffs ) {
-            return diffs.map( function ( value ) {
-                return [this._asDmpOperation ( value.operation ), value.text];
-            }.bind( this ) );
-        };
-
-        this._asDmpOperation = function( op ) {
-            if ( op === "DELETE" ) {
-                return -1;
-            } else if ( op === "ADD" ) {
-                return 1;
-            }
-            return 0;
-        };
-
-        this._asAgOperation = function( op ) {
-            if ( op === -1 ) {
-                return "DELETE";
-            } else if ( op === 1 ) {
-                return "ADD";
-            }
-            return "UNCHANGED";
         };
 
         this.patchShadow = function( patchMsg ) {
@@ -2505,42 +2465,24 @@ this['DIFF_EQUAL'] = DIFF_EQUAL;
         };
 
         this.applyEditsToShadow = function ( edits, shadow ) {
-            var doc, diffs, patches, patchResult;
-
-            doc = typeof shadow.content === 'string' ? shadow.content : JSON.stringify( shadow.content );
-            diffs = this._asDiffMatchPathDiffs( edits.diffs );
-            patches = dmp.patch_make( doc, diffs );
-
-            patchResult = dmp.patch_apply( patches, doc );
-            try {
-                shadow.content = JSON.parse( patchResult[ 0 ] );
-            } catch( e ) {
-                shadow.content = patchResult[ 0 ];
-            }
+            var patchResult;
+            // returns true or false,  should probably do something with it?
+            patchResult = dmp.apply( shadow.content, edits.diffs[0] );
             return shadow;
         };
 
         this.patchDocument = function( shadow ) {
-            var doc, diffs, patches, patchApplied;
+            var doc, diffs
 
             // first get the document based on the shadowdocs ID
             doc = this.getDocument( shadow.id );
 
-            // diff the doc and shadow and patch that shizzel
-            diffs = dmp.diff_main( JSON.stringify( doc.content ), JSON.stringify( shadow.content ) );
+            diffs = dmp.compare( doc.content, shadow.content );
 
-            patches = dmp.patch_make( JSON.stringify( doc.content ), diffs );
-
-            patchApplied = dmp.patch_apply( patches, JSON.stringify( doc.content ) );
+            dmp.apply( doc.content, diffs );
 
             //save the newly patched document
-            doc.content = JSON.parse( patchApplied[ 0 ] );
-
             this._saveDocument( doc );
-
-            //return the applied patch?
-            //console.log('patches: ', patchApplied);
-            return patchApplied;
         };
 
         this._saveData = function( data, type ) {
