@@ -319,7 +319,7 @@ AeroGear.DiffSyncEngine.adapters.jsonPatch = function() {
     this.applyEditsToShadow = function ( edits, shadow ) {
         var patchResult;
         // returns true or false,  should probably do something with it?
-        patchResult = jsonpatch.apply( shadow.content, edits.diffs[0] );
+        patchResult = jsonpatch.apply( shadow.content, edits.diffs );
         return shadow;
     };
 
