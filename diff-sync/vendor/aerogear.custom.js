@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v2.1.0-dev - 2015-01-30
+/*! AeroGear JavaScript Library - v2.1.0-dev - 2015-02-06
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -404,7 +404,7 @@ AeroGear.DiffSyncEngine.adapters.jsonPatch = function() {
         for ( i = 0; i < pendingEdits.length; i++ ) {
             pendingEdit = pendingEdits[i];
             for ( j = 0; j < pendingEdit.edits.length; j++) {
-                if ( pendingEdit.edits[j].serverVersion === edit.serverVersion && pendingEdit.edits[j].clientVersion <= edit.clientVersion) {
+                if ( pendingEdit.edits[j].clientVersion <= edit.clientVersion) {
                     pendingEdit.edits.splice(i, 1);
                     break;
                 }
