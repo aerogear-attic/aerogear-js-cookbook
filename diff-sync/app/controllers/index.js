@@ -10,19 +10,15 @@ var seedData = {
         profession: 'Jedi',
         hobbies: [
             {
-                id: uuid(),
                 description: 'Fighting the Dark Side'
             },
             {
-                id: uuid(),
                 description: 'going into Tosche Station to pick up some power converters'
             },
             {
-                id: uuid(),
                 description: 'Kissing his sister'
             },
             {
-                id: uuid(),
                 description: 'Bulls eyeing Womprats on his T-16'
             }
         ]
