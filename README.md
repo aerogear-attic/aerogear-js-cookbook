@@ -53,11 +53,12 @@ To get the recipes, clone this repo:
 
 ## Cookbook apps
 
-| App | Description | Data Manager | Push |
-|-----|-------------|:------------:|:----:|
-| [Food Recipes](food_recipes_data_manager) | Client-side storage example. | :heavy_check_mark: | :heavy_minus_sign: |
-| [Simple Push](simplepush-example) | Introduction to SimplePush. | :heavy_minus_sign: | :heavy_check_mark: |
-| [Unified Push](simplepush-unifiedpush-example) | Usage of AeroGear's SimplePush/Unified Push JS API | :heavy_minus_sign: | :heavy_check_mark: |
+| App | Description | Data Manager | Push | Sync |
+|-----|-------------|:------------:|:----:|:----:|
+| [Food Recipes](food_recipes_data_manager) | Client-side storage example. | :heavy_check_mark: | :heavy_minus_sign: | :heavy_minus_sign: |
+| [Simple Push](simplepush-example) | Introduction to SimplePush. | :heavy_minus_sign: | :heavy_check_mark: | :heavy_minus_sign: |
+| [Unified Push](simplepush-unifiedpush-example) | Usage of AeroGear's SimplePush/Unified Push JS API | :heavy_minus_sign: | :heavy_check_mark: | :heavy_minus_sign: |
+| [Diff Sync](diff-sync-ember) | Ember app showcasing the use of Differential Synchronization client lib | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_check_mark: |
 
 ## Contributing Cookbook Recipes
 
