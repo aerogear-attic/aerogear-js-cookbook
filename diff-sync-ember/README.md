@@ -1,5 +1,5 @@
-Differential-syncronization
-===============================
+Differential Synchronization - Ember Example
+============================================
 
 ## Problem
 
