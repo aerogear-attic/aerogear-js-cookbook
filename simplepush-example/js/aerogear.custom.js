@@ -1,4 +1,4 @@
-/*! AeroGear JavaScript Library - v2.0.0 - 2014-10-22
+/*! AeroGear JavaScript Library - v2.1.0 - 2015-03-12
 * https://github.com/aerogear/aerogear-js
 * JBoss, Home of Professional Open Source
 * Copyright Red Hat, Inc., and individual contributors
@@ -386,7 +386,8 @@ AeroGear.extend = function() {
 
 /**
     The AeroGear.Notifier namespace provides a messaging API. Through the use of adapters, this library provides common methods like connect, disconnect, subscribe, unsubscribe and publish.
-    @status Stable
+    @deprecated since 2.1.0 and will be removed in a future release.
+    @status Deprecated
     @class
     @augments AeroGear.Core
     @param {String|Array|Object} [config] - A configuration for the client(s) being created along with the notifier. If an object or array containing objects is used, the objects can have the following properties:
