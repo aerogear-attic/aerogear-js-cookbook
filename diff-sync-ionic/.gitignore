@@ -1,0 +1,9 @@
+# generated stuff
+node_modules/
+platforms/
+plugins/
+hooks/
+www/lib
+
+# IntelliJ Idea files
+.idea

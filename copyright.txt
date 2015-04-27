@@ -1,0 +1,3 @@
+see https://aerogear.org/docs/guides/license/ about this file
+
+Ali Ok <aliok AT apache DOT org>
