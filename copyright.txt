@@ -1,3 +1,5 @@
 see https://aerogear.org/docs/guides/license/ about this file
 
+Contributors:
 Ali Ok <aliok AT apache DOT org>
+Red Hat, Inc.

@@ -60,6 +60,7 @@ To get the recipes, clone this repo:
 | [Unified Push](simplepush-unifiedpush-example) | Usage of AeroGear's SimplePush/Unified Push JS API | :heavy_minus_sign: | :heavy_check_mark: | :heavy_minus_sign: |
 | [Diff Sync - Ember](diff-sync-ember) | Ember app showcasing the use of Differential Synchronization client lib | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_check_mark: |
 | [Diff Sync - Ionic/Angular](diff-sync-ionic) | Ionic/Angular app showcasing the use of Differential Synchronization client lib | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_check_mark: |
+| [Diff Sync - Canvas](diff-sync-canvas) | Html canvas app showcasing the use of Differential Synchronization client lib | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_check_mark: |
 
 ## Contributing Cookbook Recipes
 
