@@ -13,8 +13,10 @@
             // extract the endpoint object from the event:
             mailEndpoint = event.target.result;
 
-            // let's print the pushEndpoint URL.
-            appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint);
+            // let's print the pushEndpoint URL, when present
+            if (mailEndpoint) {
+                appendTextArea("Mail pushEndpoint URL: \n" + mailEndpoint);
+            }
         };
 
         // set the notification handler:
