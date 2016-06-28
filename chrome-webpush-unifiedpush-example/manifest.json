@@ -1,0 +1,4 @@
+{
+  "name": "Chrome Push API with AeroGear Unified Push Example",
+  "gcm_sender_id": "your_fcm_or_gcm_sender_id"
+}

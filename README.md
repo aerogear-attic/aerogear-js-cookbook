@@ -58,6 +58,7 @@ To get the recipes, clone this repo:
 | [Food Recipes](food_recipes_data_manager) | Client-side storage example. | :heavy_check_mark: | :heavy_minus_sign: | :heavy_minus_sign: |
 | [Simple Push](simplepush-example) | Introduction to SimplePush. | :heavy_minus_sign: | :heavy_check_mark: | :heavy_minus_sign: |
 | [Unified Push](simplepush-unifiedpush-example) | Usage of AeroGear's SimplePush/Unified Push JS API | :heavy_minus_sign: | :heavy_check_mark: | :heavy_minus_sign: |
+| [Chrome Push API](chrome-webpush-unifiedpush-example) | Usage of Chrome Push API with AeroGear Unified Push Server | :heavy_minus_sign: | :heavy_check_mark: | :heavy_minus_sign: |
 | [Diff Sync - Ember](diff-sync-ember) | Ember app showcasing the use of Differential Synchronization client lib | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_check_mark: |
 | [Diff Sync - Ionic/Angular](diff-sync-ionic) | Ionic/Angular app showcasing the use of Differential Synchronization client lib | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_check_mark: |
 | [Diff Sync - Canvas](diff-sync-canvas) | Html canvas app showcasing the use of Differential Synchronization client lib | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_check_mark: |
